@@ -27,5 +27,8 @@ public class Site {
     private LocalTime heureFermeture;
 
     @Column(nullable = false)
+    private Integer annee;
+
+    @Column(nullable = false)
     private boolean actif;
 }

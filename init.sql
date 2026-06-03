@@ -53,7 +53,7 @@ SET IDENTITY_INSERT terrains OFF;
 GO
 
 -- ============================================================
--- MEMBRES (10 membres : GLOBAL, SITE, LIBRE)
+-- MEMBRES (10 membres (pour l'instant): GLOBAL, SITE, LIBRE)
 -- ============================================================
 SET IDENTITY_INSERT membres ON;
 

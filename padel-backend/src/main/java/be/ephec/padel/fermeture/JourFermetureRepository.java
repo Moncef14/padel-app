@@ -12,4 +12,8 @@ public interface JourFermetureRepository extends JpaRepository<JourFermeture, Lo
     List<JourFermeture> findBySiteIsNull();
 
     List<JourFermeture> findByDate(LocalDate date);
+
+    boolean existsBySiteIsNullAndDate(LocalDate date);
+
+    boolean existsBySiteIdAndDate(Long siteId, LocalDate date);
 }

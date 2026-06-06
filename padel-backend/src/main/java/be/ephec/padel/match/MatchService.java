@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 
+import be.ephec.padel.fermeture.JourFermetureRepository;
 import be.ephec.padel.membre.MembreRepository;
 import be.ephec.padel.terrain.TerrainRepository;
 
@@ -19,11 +20,13 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final MembreRepository membreRepository;
     private final TerrainRepository terrainRepository;
+    private final JourFermetureRepository jourFermetureRepository;
 
-    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository, TerrainRepository terrainRepository) {
+    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository, TerrainRepository terrainRepository, JourFermetureRepository jourFermetureRepository) {
         this.matchRepository = matchRepository;
         this.membreRepository = membreRepository;
         this.terrainRepository = terrainRepository;
+        this.jourFermetureRepository = jourFermetureRepository;
     }
 
     public List<Match> getAll() {
@@ -105,9 +108,16 @@ public class MatchService {
             }
         }
 
+        // Vérification jour de fermeture
+        LocalDate dateMatch = dateHeure.toLocalDate();
+        boolean jourFerme = jourFermetureRepository.existsBySiteIsNullAndDate(dateMatch) ||
+            jourFermetureRepository.existsBySiteIdAndDate(terrain.getSite().getId(), dateMatch);
+        if (jourFerme) {
+            throw new RuntimeException("Réservation impossible : le site est fermé le " + dateMatch);
+        }
+
         return matchRepository.save(match);
     }
-    
 
     public Match update(Long id, Match match) {
         Match existing = getById(id);

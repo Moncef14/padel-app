@@ -11,16 +11,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import be.ephec.padel.membre.MembreRepository;
+import be.ephec.padel.terrain.TerrainRepository;
 
 @Service
 public class MatchService {
 
     private final MatchRepository matchRepository;
     private final MembreRepository membreRepository;
+    private final TerrainRepository terrainRepository;
 
-    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository) {
+    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository, TerrainRepository terrainRepository) {
         this.matchRepository = matchRepository;
         this.membreRepository = membreRepository;
+        this.terrainRepository = terrainRepository;
     }
 
     public List<Match> getAll() {
@@ -44,26 +47,38 @@ public class MatchService {
         return matchRepository.findByType(TypeMatch.PUBLIC);
     }
 
-    public Match create(Match match) { // Modife faite le 05/06/26 après la remise
+    public Match create(Match match) { // Modifications post-remise : règles métier
+        // Chargement complet de l'organisateur
         Long organisateurId = match.getOrganisateur().getId();
         var organisateur = membreRepository.findById(organisateurId)
-            .orElseThrow(() -> new RuntimeException("Membre non trouvé avec l'id : " + organisateurId));
+                .orElseThrow(() -> new RuntimeException("Membre non trouvé avec l'id : " + organisateurId));
         match.setOrganisateur(organisateur);
+
+        // Chargement complet du terrain
+        Long terrainId = match.getTerrain().getId();
+        var terrain = terrainRepository.findById(terrainId)
+                .orElseThrow(() -> new RuntimeException("Terrain non trouvé avec l'id : " + terrainId));
+        match.setTerrain(terrain);
+
         var dateHeure = match.getDateHeure();
 
+        // Vérification date dans le futur
         if (dateHeure == null || dateHeure.isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Réservation impossible : la date doit être dans le futur");
         }
 
+        // Vérification solde dû
         if (organisateur.getSoldeDu().compareTo(BigDecimal.ZERO) > 0) {
             throw new RuntimeException("Réservation impossible : solde dû de " + organisateur.getSoldeDu() + "€");
         }
 
+        // Vérification pénalité active
         if (organisateur.getPenaliteJusquAu() != null &&
                 organisateur.getPenaliteJusquAu().isAfter(LocalDate.now())) {
             throw new RuntimeException("Réservation impossible : pénalité active jusqu'au " + organisateur.getPenaliteJusquAu());
         }
 
+        // Vérification délai selon type de membre
         long joursAvant = java.time.temporal.ChronoUnit.DAYS.between(
                 LocalDate.now(), dateHeure.toLocalDate());
         switch (organisateur.getType()) {
@@ -81,8 +96,18 @@ public class MatchService {
             }
         }
 
+        // Vérification membre SITE dans son site uniquement
+        if (organisateur.getType() == be.ephec.padel.membre.TypeMembre.SITE) {
+            if (organisateur.getSite() == null ||
+                    !organisateur.getSite().getId().equals(terrain.getSite().getId())) {
+                throw new RuntimeException("Réservation impossible : un membre SITE ne peut réserver que dans son site ("
+                        + (organisateur.getSite() != null ? organisateur.getSite().getNom() : "aucun site assigné") + ")");
+            }
+        }
+
         return matchRepository.save(match);
     }
+    
 
     public Match update(Long id, Match match) {
         Match existing = getById(id);

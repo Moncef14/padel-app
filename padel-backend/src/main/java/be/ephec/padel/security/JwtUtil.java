@@ -9,7 +9,8 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class JwtUtil {
+public class
+JwtUtil {
 
     private static final String SECRET = "padel-ephec-super-secret-key-256bits-minimum-32chars!!";
     private static final long EXPIRATION_MS = 24L * 60 * 60 * 1000;

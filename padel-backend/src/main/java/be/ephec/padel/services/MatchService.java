@@ -120,6 +120,20 @@ public class MatchService {
             throw new RuntimeException("Réservation impossible : le site est fermé le " + dateMatch);
         }
 
+        // VÉRIFICATION CRÉNEAU DISPONIBLE
+        // Un match dure 1h30 + 15 min de battement = 1h45
+        // On vérifie qu'aucun autre match n'occupe ce terrain
+        // dans la fenêtre [dateHeure - 1h45, dateHeure + 1h45]
+        // en excluant les matchs ANNULE
+        LocalDateTime debutFenetre = dateHeure.minusMinutes(105);
+        LocalDateTime finFenetre = dateHeure.plusMinutes(105);
+        boolean creneauOccupe = matchRepository
+                .existsByTerrainIdAndDateHeureBetweenAndStatutNot(
+                        terrain.getId(), debutFenetre, finFenetre, StatutMatch.ANNULE);
+        if (creneauOccupe)
+            throw new RuntimeException(
+                    "Créneau non disponible : ce terrain est déjà réservé sur ce créneau");
+
         return matchRepository.save(match);
     }
 

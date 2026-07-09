@@ -14,6 +14,9 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 
+import be.ephec.padel.models.InscriptionMatch;
+import be.ephec.padel.models.enums.StatutPaiement;
+import be.ephec.padel.repositories.InscriptionMatchRepository;
 import be.ephec.padel.repositories.JourFermetureRepository;
 import be.ephec.padel.repositories.MembreRepository;
 import be.ephec.padel.repositories.TerrainRepository;
@@ -25,12 +28,14 @@ public class MatchService {
     private final MembreRepository membreRepository;
     private final TerrainRepository terrainRepository;
     private final JourFermetureRepository jourFermetureRepository;
+    private final InscriptionMatchRepository inscriptionMatchRepository;
 
-    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository, TerrainRepository terrainRepository, JourFermetureRepository jourFermetureRepository) {
+    public MatchService(MatchRepository matchRepository, MembreRepository membreRepository, TerrainRepository terrainRepository, JourFermetureRepository jourFermetureRepository, InscriptionMatchRepository inscriptionMatchRepository) {
         this.matchRepository = matchRepository;
         this.membreRepository = membreRepository;
         this.terrainRepository = terrainRepository;
         this.jourFermetureRepository = jourFermetureRepository;
+        this.inscriptionMatchRepository = inscriptionMatchRepository;
     }
 
     public List<Match> getAll() {
@@ -134,7 +139,27 @@ public class MatchService {
             throw new RuntimeException(
                     "Créneau non disponible : ce terrain est déjà réservé sur ce créneau");
 
-        return matchRepository.save(match);
+        // AUTO-INSCRIPTION DE L'ORGANISATEUR
+        InscriptionMatch inscriptionOrganisateur = InscriptionMatch.builder()
+                .match(match)
+                .membre(organisateur)
+                .statutPaiement(StatutPaiement.PAYE)
+                .montantPaye(BigDecimal.valueOf(15).add(organisateur.getSoldeDu()))
+                .datePaiement(LocalDateTime.now())
+                .build();
+
+        // Remettre le soldeDu à zéro
+        organisateur.setSoldeDu(BigDecimal.ZERO);
+        membreRepository.save(organisateur);
+
+        // Sauvegarder le match d'abord pour avoir l'id
+        Match savedMatch = matchRepository.save(match);
+
+        // Puis sauvegarder l'inscription avec le match sauvegardé
+        inscriptionOrganisateur.setMatch(savedMatch);
+        inscriptionMatchRepository.save(inscriptionOrganisateur);
+
+        return savedMatch;
     }
 
     public Match update(Long id, Match match) {

@@ -58,16 +58,16 @@ GO
 SET IDENTITY_INSERT membres ON;
 
 INSERT INTO membres (id, matricule, nom, prenom, email, type, site_id, solde_du, penalite_jusqu_au) VALUES
-    (1,  'G0001', 'Dubois',      'Marie',    'marie.dubois@padel.be',         'GLOBAL', NULL, 0.00,  NULL),         -- belge
-    (2,  'G0002', 'El Amrani',   'Karim',    'karim.elamrani@padel.be',       'GLOBAL', NULL, 15.00, NULL),         -- marocaine
-    (3,  'S0003', 'Yilmaz',      'Elif',     'elif.yilmaz@padel.be',          'SITE',   1,    0.00,  NULL),         -- turque
-    (4,  'S0004', 'Lukamba',     'Samuel',   'samuel.lukamba@padel.be',       'SITE',   1,    0.00,  NULL),         -- congolaise
-    (5,  'S0005', 'Garcia',      'Sofia',    'sofia.garcia@padel.be',         'SITE',   3,    0.00,  '2026-09-01'), -- espagnole
-    (6,  'S0006', 'Rossi',       'Marco',    'marco.rossi@padel.be',          'SITE',   5,    30.00, NULL),         -- italienne
-    (7,  'G0007', 'Kowalska',    'Anna',     'anna.kowalska@padel.be',        'GLOBAL', NULL, 0.00,  NULL),         -- polonaise
-    (8,  'L0008', 'Peeters',     'Thomas',   'thomas.peeters@padel.be',       'LIBRE',  NULL, 0.00,  NULL),         -- belge (flamand)
-    (9,  'L0009', 'Nzuzi',       'Grace',    'grace.nzuzi@padel.be',          'LIBRE',  NULL, 0.00,  NULL),         -- congolaise
-    (10, 'S0010', 'Ben Youssef', 'Fatima',   'fatima.benyoussef@padel.be',    'SITE',   2,    0.00,  NULL);         -- marocaine
+    (1,  'G0001', 'Dubois',      'Marie',    'marie.dubois@padel.be',         'GLOBAL', NULL, 0.00,  NULL),
+    (2,  'G0002', 'El Amrani',   'Karim',    'karim.elamrani@padel.be',       'GLOBAL', NULL, 15.00, NULL),
+    (3,  'S0003', 'Yilmaz',      'Elif',     'elif.yilmaz@padel.be',          'SITE',   1,    0.00,  NULL),
+    (4,  'S0004', 'Lukamba',     'Samuel',   'samuel.lukamba@padel.be',       'SITE',   1,    0.00,  NULL),
+    (5,  'S0005', 'Garcia',      'Sofia',    'sofia.garcia@padel.be',         'SITE',   3,    0.00,  '2026-09-01'),
+    (6,  'S0006', 'Rossi',       'Marco',    'marco.rossi@padel.be',          'SITE',   5,    30.00, NULL),
+    (7,  'G0007', 'Kowalska',    'Anna',     'anna.kowalska@padel.be',        'GLOBAL', NULL, 0.00,  NULL),
+    (8,  'L0008', 'Peeters',     'Thomas',   'thomas.peeters@padel.be',       'LIBRE',  NULL, 0.00,  NULL),
+    (9,  'L0009', 'Nzuzi',       'Grace',    'grace.nzuzi@padel.be',          'LIBRE',  NULL, 0.00,  NULL),
+    (10, 'S0010', 'Ben Youssef', 'Fatima',   'fatima.benyoussef@padel.be',    'SITE',   2,    0.00,  NULL);
 
 SET IDENTITY_INSERT membres OFF;
 GO
@@ -112,20 +112,20 @@ SET IDENTITY_INSERT inscription_matchs ON;
 INSERT INTO inscription_matchs (id, match_id, membre_id, statut_paiement, montant_paye, date_paiement) VALUES
     -- Match 1 : PUBLIC EN_ATTENTE — Marie (org.) + Karim
     (1,  1, 1,  'PAYE',     15.00, '2026-06-08 11:00:00'),
-    (2,  1, 2,  'NON_PAYE',  0.00, NULL),
+    (2,  1, 2,  'INSCRIT',  0.00, NULL),
     -- Match 2 : PRIVE COMPLET — Elif (org.) + 3 joueurs
     (3,  2, 3,  'PAYE',     15.00, '2026-06-10 09:00:00'),
     (4,  2, 4,  'PAYE',     15.00, '2026-06-10 10:30:00'),
     (5,  2, 8,  'PAYE',     15.00, '2026-06-11 08:00:00'),
     (6,  2, 9,  'PAYE',     15.00, '2026-06-11 08:30:00'),
     -- Match 3 : PRIVE ANNULE — Sofia (org.) seule inscrite
-    (7,  3, 5,  'NON_PAYE',  0.00, NULL),
+    (7,  3, 5,  'INSCRIT',  0.00, NULL),
     -- Match 4 : DEVENU_PUBLIC — Marco (org.) + Anna
     (8,  4, 6,  'PAYE',     15.00, '2026-06-17 09:00:00'),
-    (9,  4, 7,  'NON_PAYE',  0.00, NULL),
+    (9,  4, 7,  'INSCRIT',  0.00, NULL),
     -- Match 5 : PUBLIC EN_ATTENTE — Anna (org.) + Fatima
     (10, 5, 7,  'PAYE',     15.00, '2026-06-22 14:00:00'),
-    (11, 5, 10, 'NON_PAYE',  0.00, NULL);
+    (11, 5, 10, 'INSCRIT',  0.00, NULL);
 
 SET IDENTITY_INSERT inscription_matchs OFF;
 GO

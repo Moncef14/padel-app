@@ -58,4 +58,24 @@ public class InscriptionMatchController {
         inscriptionMatchService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/inscrire")
+    public ResponseEntity<InscriptionMatch> inscrireJoueur(@RequestBody InscrireJoueurRequest request) {
+        InscriptionMatch inscription = inscriptionMatchService.inscrireJoueur(
+                request.matchId(), request.membreId(), request.organisateurId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(inscription);
+    }
+
+    @PostMapping("/payer/{inscriptionId}")
+    public ResponseEntity<InscriptionMatch> payerPlace(@PathVariable Long inscriptionId, @RequestParam Long membreId) {
+        return ResponseEntity.ok(inscriptionMatchService.payerPlace(inscriptionId, membreId));
+    }
+
+    @PostMapping("/public/{matchId}")
+    public ResponseEntity<InscriptionMatch> inscrireEtPayer(@PathVariable Long matchId, @RequestParam Long membreId) {
+        InscriptionMatch inscription = inscriptionMatchService.inscrireEtPayer(matchId, membreId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(inscription);
+    }
+
+    public record InscrireJoueurRequest(Long matchId, Long membreId, Long organisateurId) {}
 }

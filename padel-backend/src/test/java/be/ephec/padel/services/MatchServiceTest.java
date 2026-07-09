@@ -6,6 +6,8 @@ import be.ephec.padel.models.enums.TypeMatch;
 import be.ephec.padel.models.enums.StatutMatch;
 
 import be.ephec.padel.repositories.JourFermetureRepository;
+import be.ephec.padel.models.InscriptionMatch;
+import be.ephec.padel.repositories.InscriptionMatchRepository;
 import be.ephec.padel.models.Membre;
 import be.ephec.padel.repositories.MembreRepository;
 import be.ephec.padel.models.enums.TypeMembre;
@@ -33,6 +35,7 @@ class MatchServiceTest {
     @Mock private MembreRepository membreRepository;
     @Mock private TerrainRepository terrainRepository;
     @Mock private JourFermetureRepository jourFermetureRepository;
+    @Mock private InscriptionMatchRepository inscriptionMatchRepository;
 
     @InjectMocks
     private MatchService matchService;

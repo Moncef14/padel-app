@@ -18,4 +18,6 @@ public interface InscriptionMatchRepository extends JpaRepository<InscriptionMat
     List<InscriptionMatch> findByStatutPaiementAndMatch_DateHeureBetween(StatutPaiement statut, LocalDateTime debut, LocalDateTime fin);
 
     int countByMatchIdAndStatutPaiement(Long matchId, StatutPaiement statut);
+
+    boolean existsByMatchIdAndMembreId(Long matchId, Long membreId);
 }

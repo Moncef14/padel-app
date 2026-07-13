@@ -5,6 +5,7 @@ import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.models.enums.TypeMatch;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class MatchService {
         return matchRepository.findByType(TypeMatch.PUBLIC);
     }
 
+    @Transactional
     public Match create(Match match) { // Modifications post-remise : règles métier
         // Chargement complet de l'organisateur
         Long organisateurId = match.getOrganisateur().getId();

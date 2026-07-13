@@ -10,6 +10,7 @@ import be.ephec.padel.services.AdministrateurService;
 import be.ephec.padel.models.Membre;
 import be.ephec.padel.repositories.MembreRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,13 +20,16 @@ public class AuthController {
     private final AdministrateurService administrateurService;
     private final MembreRepository membreRepository;
     private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public AuthController(AdministrateurService administrateurService,
                           MembreRepository membreRepository,
-                          JwtUtil jwtUtil) {
+                          JwtUtil jwtUtil,
+                          BCryptPasswordEncoder passwordEncoder) {
         this.administrateurService = administrateurService;
         this.membreRepository = membreRepository;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -33,7 +37,7 @@ public class AuthController {
         try {
             Administrateur admin = administrateurService.getByEmail(request.getEmail());
 
-            if (!admin.getMotDePasse().equals(request.getPassword())) {
+            if (!passwordEncoder.matches(request.getPassword(), admin.getMotDePasse())) {
                 return ResponseEntity.status(401).build();
             }
 

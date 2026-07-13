@@ -78,8 +78,8 @@ GO
 SET IDENTITY_INSERT administrateurs ON;
 
 INSERT INTO administrateurs (id, nom, prenom, email, mot_de_passe, role, site_id) VALUES
-    (1, 'Ouassal',  'Moncef',  'moncef.ouassal@padelapp.be',   'admin123', 'ADMIN_GLOBAL', NULL),
-    (2, 'Houllich', 'Soumaya', 'soumaya.houllich@padelapp.be', 'admin123', 'ADMIN_SITE',   1);
+    (1, 'Ouassal',  'Moncef',  'moncef.ouassal@padelapp.be',   '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVyNLtIf5W', 'ADMIN_GLOBAL', NULL),
+    (2, 'Houllich', 'Soumaya', 'soumaya.houllich@padelapp.be', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVyNLtIf5W', 'ADMIN_SITE',   1);
 
 SET IDENTITY_INSERT administrateurs OFF;
 GO

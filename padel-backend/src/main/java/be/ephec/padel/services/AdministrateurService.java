@@ -3,6 +3,7 @@ import be.ephec.padel.models.Administrateur;
 import be.ephec.padel.repositories.AdministrateurRepository;
 import be.ephec.padel.models.enums.RoleAdmin;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
 public class AdministrateurService {
 
     private final AdministrateurRepository administrateurRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AdministrateurService(AdministrateurRepository administrateurRepository) {
+    public AdministrateurService(AdministrateurRepository administrateurRepository, BCryptPasswordEncoder passwordEncoder) {
         this.administrateurRepository = administrateurRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Administrateur> getAll() {
@@ -35,6 +38,7 @@ public class AdministrateurService {
     }
 
     public Administrateur create(Administrateur administrateur) {
+        administrateur.setMotDePasse(passwordEncoder.encode(administrateur.getMotDePasse()));
         return administrateurRepository.save(administrateur);
     }
 
@@ -42,7 +46,9 @@ public class AdministrateurService {
         Administrateur existing = getById(id);
         existing.setNom(administrateur.getNom());
         existing.setEmail(administrateur.getEmail());
-        existing.setMotDePasse(administrateur.getMotDePasse());
+        if (administrateur.getMotDePasse() != null && !administrateur.getMotDePasse().isBlank()) {
+            existing.setMotDePasse(passwordEncoder.encode(administrateur.getMotDePasse()));
+        }
         existing.setRole(administrateur.getRole());
         existing.setSite(administrateur.getSite());
         return administrateurRepository.save(existing);

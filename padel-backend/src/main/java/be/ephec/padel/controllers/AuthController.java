@@ -41,7 +41,8 @@ public class AuthController {
                 return ResponseEntity.status(401).build();
             }
 
-            String token = jwtUtil.generateToken(admin.getEmail());
+            Long siteId = admin.getSite() != null ? admin.getSite().getId() : null;
+            String token = jwtUtil.generateToken(admin.getEmail(), admin.getRole().name(), siteId);
             String nom = admin.getPrenom() + " " + admin.getNom();
             return ResponseEntity.ok(new LoginResponse(token, admin.getRole().name(), nom));
 

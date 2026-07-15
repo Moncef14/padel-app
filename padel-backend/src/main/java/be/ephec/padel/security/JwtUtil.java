@@ -26,8 +26,29 @@ JwtUtil {
                 .compact();
     }
 
+    public String generateToken(String subject, String role, Long siteId) {
+        return Jwts.builder()
+                .subject(subject)
+                .claim("role", role)
+                .claim("siteId", siteId)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key)
+                .compact();
+    }
+
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return (String) parseClaims(token).get("role");
+    }
+
+    public Long extractSiteId(String token) {
+        Object siteId = parseClaims(token).get("siteId");
+        if (siteId == null) return null;
+        return ((Number) siteId).longValue();
     }
 
     public boolean isTokenValid(String token) {

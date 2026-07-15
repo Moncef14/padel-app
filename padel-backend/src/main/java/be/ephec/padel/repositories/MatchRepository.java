@@ -23,4 +23,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     boolean existsByTerrainIdAndDateHeureBetween(Long terrainId, LocalDateTime debut, LocalDateTime fin);
 
     boolean existsByTerrainIdAndDateHeureBetweenAndStatutNot(Long terrainId, LocalDateTime debut, LocalDateTime fin, StatutMatch statut);
+
+    List<Match> findByTerrain_SiteId(Long siteId);
 }

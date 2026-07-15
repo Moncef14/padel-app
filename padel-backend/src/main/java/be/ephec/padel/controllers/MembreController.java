@@ -1,10 +1,14 @@
 package be.ephec.padel.controllers;
 import be.ephec.padel.models.Membre;
+import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.MembreService;
 import be.ephec.padel.models.enums.TypeMembre;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,13 +18,27 @@ import java.util.List;
 public class MembreController {
 
     private final MembreService membreService;
+    private final JwtUtil jwtUtil;
 
-    public MembreController(MembreService membreService) {
+    public MembreController(MembreService membreService, JwtUtil jwtUtil) {
         this.membreService = membreService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
-    public List<Membre> getAll() {
+    public List<Membre> getAll(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String role = auth.getAuthorities().stream()
+                .findFirst()
+                .map(a -> a.getAuthority().replace("ROLE_", ""))
+                .orElse("");
+
+        if ("ADMIN_SITE".equals(role)) {
+            String authHeader = request.getHeader("Authorization");
+            String token = authHeader.substring(7);
+            Long siteId = jwtUtil.extractSiteId(token);
+            return membreService.getBySiteId(siteId);
+        }
         return membreService.getAll();
     }
 

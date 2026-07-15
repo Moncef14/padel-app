@@ -5,12 +5,14 @@ import be.ephec.padel.models.enums.RoleAdmin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admins")
+@PreAuthorize("hasRole('ADMIN_GLOBAL')")
 public class AdministrateurController {
 
     private final AdministrateurService administrateurService;

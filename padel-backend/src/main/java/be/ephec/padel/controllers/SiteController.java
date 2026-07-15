@@ -4,6 +4,7 @@ import be.ephec.padel.services.SiteService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,16 +35,19 @@ public class SiteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN_GLOBAL')")
     public ResponseEntity<Site> create(@RequestBody Site site) {
         return ResponseEntity.status(HttpStatus.CREATED).body(siteService.create(site));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN_GLOBAL')")
     public ResponseEntity<Site> update(@PathVariable Long id, @RequestBody Site site) {
         return ResponseEntity.ok(siteService.update(id, site));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN_GLOBAL')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         siteService.delete(id);
         return ResponseEntity.noContent().build();

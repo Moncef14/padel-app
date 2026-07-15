@@ -60,6 +60,10 @@ public class MatchService {
         return matchRepository.findByType(TypeMatch.PUBLIC);
     }
 
+    public List<Match> getBySiteId(Long siteId) {
+        return matchRepository.findByTerrain_SiteId(siteId);
+    }
+
     @Transactional
     public Match create(Match match) { // Modifications post-remise : règles métier
         // Chargement complet de l'organisateur

@@ -1,9 +1,13 @@
 package be.ephec.padel.controllers;
 import be.ephec.padel.models.Terrain;
+import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.TerrainService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,13 +17,27 @@ import java.util.List;
 public class TerrainController {
 
     private final TerrainService terrainService;
+    private final JwtUtil jwtUtil;
 
-    public TerrainController(TerrainService terrainService) {
+    public TerrainController(TerrainService terrainService, JwtUtil jwtUtil) {
         this.terrainService = terrainService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
-    public List<Terrain> getAll() {
+    public List<Terrain> getAll(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String role = auth.getAuthorities().stream()
+                .findFirst()
+                .map(a -> a.getAuthority().replace("ROLE_", ""))
+                .orElse("");
+
+        if ("ADMIN_SITE".equals(role)) {
+            String authHeader = request.getHeader("Authorization");
+            String token = authHeader.substring(7);
+            Long siteId = jwtUtil.extractSiteId(token);
+            return terrainService.getBySiteId(siteId);
+        }
         return terrainService.getAll();
     }
 

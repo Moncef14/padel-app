@@ -1,11 +1,15 @@
 package be.ephec.padel.controllers;
 import be.ephec.padel.models.Match;
+import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.MatchService;
 import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.models.enums.TypeMatch;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,13 +19,27 @@ import java.util.List;
 public class MatchController {
 
     private final MatchService matchService;
+    private final JwtUtil jwtUtil;
 
-    public MatchController(MatchService matchService) {
+    public MatchController(MatchService matchService, JwtUtil jwtUtil) {
         this.matchService = matchService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
-    public List<Match> getAll() {
+    public List<Match> getAll(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String role = auth.getAuthorities().stream()
+                .findFirst()
+                .map(a -> a.getAuthority().replace("ROLE_", ""))
+                .orElse("");
+
+        if ("ADMIN_SITE".equals(role)) {
+            String authHeader = request.getHeader("Authorization");
+            String token = authHeader.substring(7);
+            Long siteId = jwtUtil.extractSiteId(token);
+            return matchService.getBySiteId(siteId);
+        }
         return matchService.getAll();
     }
 

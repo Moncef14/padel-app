@@ -1,4 +1,5 @@
 package be.ephec.padel.services;
+import be.ephec.padel.dto.InscriptionMatchResponse;
 import be.ephec.padel.models.InscriptionMatch;
 import be.ephec.padel.models.Match;
 import be.ephec.padel.models.Membre;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InscriptionMatchService {
@@ -199,5 +201,31 @@ public class InscriptionMatchService {
         }
 
         return saved;
+    }
+
+    public InscriptionMatchResponse toResponse(InscriptionMatch i) {
+        return InscriptionMatchResponse.builder()
+                .id(i.getId())
+                .matchId(i.getMatch() != null ? i.getMatch().getId() : null)
+                .membreId(i.getMembre() != null ? i.getMembre().getId() : null)
+                .nomMembre(i.getMembre() != null ? i.getMembre().getNom() : null)
+                .prenomMembre(i.getMembre() != null ? i.getMembre().getPrenom() : null)
+                .matriculeMembre(i.getMembre() != null ? i.getMembre().getMatricule() : null)
+                .statutPaiement(i.getStatutPaiement())
+                .montantPaye(i.getMontantPaye())
+                .datePaiement(i.getDatePaiement())
+                .build();
+    }
+
+    public List<InscriptionMatchResponse> getByMatchIdAsResponse(Long matchId) {
+        return inscriptionMatchRepository.findByMatchId(matchId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<InscriptionMatchResponse> getByMembreIdAsResponse(Long membreId) {
+        return inscriptionMatchRepository.findByMembreId(membreId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 }

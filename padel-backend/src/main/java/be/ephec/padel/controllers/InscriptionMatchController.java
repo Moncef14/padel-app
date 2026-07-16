@@ -1,4 +1,5 @@
 package be.ephec.padel.controllers;
+import be.ephec.padel.dto.InscriptionMatchResponse;
 import be.ephec.padel.models.InscriptionMatch;
 import be.ephec.padel.services.InscriptionMatchService;
 
@@ -24,18 +25,20 @@ public class InscriptionMatchController {
     }
 
     @GetMapping("/match/{matchId}")
-    public List<InscriptionMatch> getByMatchId(@PathVariable Long matchId) {
-        return inscriptionMatchService.getByMatchId(matchId);
+    public List<InscriptionMatchResponse> getByMatchId(@PathVariable Long matchId) {
+        return inscriptionMatchService.getByMatchIdAsResponse(matchId);
     }
 
     @GetMapping("/match/{matchId}/payes")
-    public List<InscriptionMatch> getJoueursPayes(@PathVariable Long matchId) {
-        return inscriptionMatchService.getJoueursPayes(matchId);
+    public List<InscriptionMatchResponse> getJoueursPayes(@PathVariable Long matchId) {
+        return inscriptionMatchService.getJoueursPayes(matchId).stream()
+                .map(inscriptionMatchService::toResponse)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/membre/{membreId}")
-    public List<InscriptionMatch> getByMembreId(@PathVariable Long membreId) {
-        return inscriptionMatchService.getByMembreId(membreId);
+    public List<InscriptionMatchResponse> getByMembreId(@PathVariable Long membreId) {
+        return inscriptionMatchService.getByMembreIdAsResponse(membreId);
     }
 
     @GetMapping("/{id}")
@@ -60,21 +63,29 @@ public class InscriptionMatchController {
     }
 
     @PostMapping("/inscrire")
-    public ResponseEntity<InscriptionMatch> inscrireJoueur(@RequestBody InscrireJoueurRequest request) {
-        InscriptionMatch inscription = inscriptionMatchService.inscrireJoueur(
-                request.matchId(), request.membreId(), request.organisateurId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(inscription);
+    public ResponseEntity<InscriptionMatchResponse> inscrireJoueur(
+            @RequestBody InscrireJoueurRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                inscriptionMatchService.toResponse(
+                        inscriptionMatchService.inscrireJoueur(
+                                request.matchId(), request.membreId(),
+                                request.organisateurId())));
     }
 
     @PostMapping("/payer/{inscriptionId}")
-    public ResponseEntity<InscriptionMatch> payerPlace(@PathVariable Long inscriptionId, @RequestParam Long membreId) {
-        return ResponseEntity.ok(inscriptionMatchService.payerPlace(inscriptionId, membreId));
+    public ResponseEntity<InscriptionMatchResponse> payerPlace(
+            @PathVariable Long inscriptionId, @RequestParam Long membreId) {
+        return ResponseEntity.ok(
+                inscriptionMatchService.toResponse(
+                        inscriptionMatchService.payerPlace(inscriptionId, membreId)));
     }
 
     @PostMapping("/public/{matchId}")
-    public ResponseEntity<InscriptionMatch> inscrireEtPayer(@PathVariable Long matchId, @RequestParam Long membreId) {
-        InscriptionMatch inscription = inscriptionMatchService.inscrireEtPayer(matchId, membreId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(inscription);
+    public ResponseEntity<InscriptionMatchResponse> inscrireEtPayer(
+            @PathVariable Long matchId, @RequestParam Long membreId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                inscriptionMatchService.toResponse(
+                        inscriptionMatchService.inscrireEtPayer(matchId, membreId)));
     }
 
     public record InscrireJoueurRequest(Long matchId, Long membreId, Long organisateurId) {}

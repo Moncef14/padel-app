@@ -1,4 +1,6 @@
 package be.ephec.padel.controllers;
+import be.ephec.padel.dto.AdministrateurCreateRequest;
+import be.ephec.padel.dto.AdministrateurResponse;
 import be.ephec.padel.models.Administrateur;
 import be.ephec.padel.services.AdministrateurService;
 import be.ephec.padel.models.enums.RoleAdmin;
@@ -22,28 +24,32 @@ public class AdministrateurController {
     }
 
     @GetMapping
-    public List<Administrateur> getAll() {
-        return administrateurService.getAll();
+    public List<AdministrateurResponse> getAll() {
+        return administrateurService.getAllAsResponse();
     }
 
     @GetMapping("/role/{role}")
-    public List<Administrateur> getByRole(@PathVariable RoleAdmin role) {
-        return administrateurService.getByRole(role);
+    public List<AdministrateurResponse> getByRole(@PathVariable RoleAdmin role) {
+        return administrateurService.getByRole(role).stream()
+                .map(administrateurService::toResponse)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Administrateur> getByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(administrateurService.getByEmail(email));
+    public ResponseEntity<AdministrateurResponse> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(
+                administrateurService.toResponse(
+                        administrateurService.getByEmail(email)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Administrateur> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(administrateurService.getById(id));
+    public ResponseEntity<AdministrateurResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(administrateurService.getByIdAsResponse(id));
     }
 
     @PostMapping
-    public ResponseEntity<Administrateur> create(@RequestBody Administrateur administrateur) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(administrateurService.create(administrateur));
+    public ResponseEntity<AdministrateurResponse> create(@RequestBody AdministrateurCreateRequest administrateur) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(administrateurService.createFromRequest(administrateur));
     }
 
     @PutMapping("/{id}")

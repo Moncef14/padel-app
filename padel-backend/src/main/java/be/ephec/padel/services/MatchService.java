@@ -1,5 +1,9 @@
 package be.ephec.padel.services;
+import be.ephec.padel.dto.MatchCreateRequest;
+import be.ephec.padel.dto.MatchResponse;
 import be.ephec.padel.models.Match;
+import be.ephec.padel.models.Membre;
+import be.ephec.padel.models.Terrain;
 import be.ephec.padel.repositories.MatchRepository;
 import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.models.enums.TypeMatch;
@@ -8,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import java.math.BigDecimal;
 
@@ -182,5 +187,58 @@ public class MatchService {
 
     public void delete(Long id) {
         matchRepository.deleteById(id);
+    }
+
+    public MatchResponse toResponse(Match m) {
+        return MatchResponse.builder()
+                .id(m.getId())
+                .terrainId(m.getTerrain() != null ? m.getTerrain().getId() : null)
+                .terrainNumero(m.getTerrain() != null ? m.getTerrain().getNumero() : null)
+                .siteId(m.getTerrain() != null && m.getTerrain().getSite() != null ? m.getTerrain().getSite().getId() : null)
+                .nomSite(m.getTerrain() != null && m.getTerrain().getSite() != null ? m.getTerrain().getSite().getNom() : null)
+                .organisateurId(m.getOrganisateur() != null ? m.getOrganisateur().getId() : null)
+                .nomOrganisateur(m.getOrganisateur() != null ? m.getOrganisateur().getNom() : null)
+                .prenomOrganisateur(m.getOrganisateur() != null ? m.getOrganisateur().getPrenom() : null)
+                .dateHeure(m.getDateHeure())
+                .type(m.getType())
+                .statut(m.getStatut())
+                .montantTotal(m.getMontantTotal())
+                .devenuPublicLe(m.getDevenuPublicLe())
+                .build();
+    }
+
+    public Match toEntity(MatchCreateRequest dto) {
+        Terrain terrain = new Terrain();
+        terrain.setId(dto.getTerrainId());
+        Membre organisateur = new Membre();
+        organisateur.setId(dto.getOrganisateurId());
+        return Match.builder()
+                .terrain(terrain)
+                .organisateur(organisateur)
+                .dateHeure(dto.getDateHeure())
+                .type(dto.getType())
+                .statut(StatutMatch.EN_ATTENTE)
+                .montantTotal(new BigDecimal("60"))
+                .build();
+    }
+
+    public List<MatchResponse> getAllAsResponse() {
+        return matchRepository.findAll().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<MatchResponse> getBySiteIdAsResponse(Long siteId) {
+        return matchRepository.findByTerrain_SiteId(siteId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public MatchResponse getByIdAsResponse(Long id) {
+        return toResponse(getById(id));
+    }
+
+    public MatchResponse createFromRequest(MatchCreateRequest dto) {
+        return toResponse(create(toEntity(dto)));
     }
 }

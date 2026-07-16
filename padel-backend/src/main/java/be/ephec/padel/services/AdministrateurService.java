@@ -1,5 +1,8 @@
 package be.ephec.padel.services;
+import be.ephec.padel.dto.AdministrateurCreateRequest;
+import be.ephec.padel.dto.AdministrateurResponse;
 import be.ephec.padel.models.Administrateur;
+import be.ephec.padel.models.Site;
 import be.ephec.padel.repositories.AdministrateurRepository;
 import be.ephec.padel.models.enums.RoleAdmin;
 
@@ -7,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdministrateurService {
@@ -56,5 +60,47 @@ public class AdministrateurService {
 
     public void delete(Long id) {
         administrateurRepository.deleteById(id);
+    }
+
+    public AdministrateurResponse toResponse(Administrateur a) {
+        return AdministrateurResponse.builder()
+                .id(a.getId())
+                .nom(a.getNom())
+                .prenom(a.getPrenom())
+                .email(a.getEmail())
+                .role(a.getRole())
+                .siteId(a.getSite() != null ? a.getSite().getId() : null)
+                .nomSite(a.getSite() != null ? a.getSite().getNom() : null)
+                .build();
+    }
+
+    public Administrateur toEntity(AdministrateurCreateRequest dto) {
+        Administrateur admin = Administrateur.builder()
+                .nom(dto.getNom())
+                .prenom(dto.getPrenom())
+                .email(dto.getEmail())
+                .motDePasse(dto.getMotDePasse())
+                .role(dto.getRole())
+                .build();
+        if (dto.getSiteId() != null) {
+            Site site = new Site();
+            site.setId(dto.getSiteId());
+            admin.setSite(site);
+        }
+        return admin;
+    }
+
+    public List<AdministrateurResponse> getAllAsResponse() {
+        return administrateurRepository.findAll().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public AdministrateurResponse getByIdAsResponse(Long id) {
+        return toResponse(getById(id));
+    }
+
+    public AdministrateurResponse createFromRequest(AdministrateurCreateRequest dto) {
+        return toResponse(create(toEntity(dto)));
     }
 }

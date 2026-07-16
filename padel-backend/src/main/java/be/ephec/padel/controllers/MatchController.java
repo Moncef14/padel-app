@@ -1,4 +1,6 @@
 package be.ephec.padel.controllers;
+import be.ephec.padel.dto.MatchCreateRequest;
+import be.ephec.padel.dto.MatchResponse;
 import be.ephec.padel.models.Match;
 import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.MatchService;
@@ -27,7 +29,7 @@ public class MatchController {
     }
 
     @GetMapping
-    public List<Match> getAll(HttpServletRequest request) {
+    public List<MatchResponse> getAll(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String role = auth.getAuthorities().stream()
                 .findFirst()
@@ -38,19 +40,21 @@ public class MatchController {
             String authHeader = request.getHeader("Authorization");
             String token = authHeader.substring(7);
             Long siteId = jwtUtil.extractSiteId(token);
-            return matchService.getBySiteId(siteId);
+            return matchService.getBySiteIdAsResponse(siteId);
         }
-        return matchService.getAll();
+        return matchService.getAllAsResponse();
     }
 
     @GetMapping("/publics")
-    public List<Match> getPublics() {
-        return matchService.getPublics();
+    public List<MatchResponse> getPublics() {
+        return matchService.getPublics().stream()
+                .map(matchService::toResponse)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Match> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(matchService.getById(id));
+    public ResponseEntity<MatchResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(matchService.getByIdAsResponse(id));
     }
 
     @GetMapping("/statut/{statut}")
@@ -64,8 +68,8 @@ public class MatchController {
     }
 
     @PostMapping
-    public ResponseEntity<Match> create(@RequestBody Match match) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchService.create(match));
+    public ResponseEntity<MatchResponse> create(@RequestBody MatchCreateRequest match) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(matchService.createFromRequest(match));
     }
 
     @PutMapping("/{id}")

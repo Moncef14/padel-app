@@ -1,4 +1,6 @@
 package be.ephec.padel.controllers;
+import be.ephec.padel.dto.MembreCreateRequest;
+import be.ephec.padel.dto.MembreResponse;
 import be.ephec.padel.models.Membre;
 import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.MembreService;
@@ -26,7 +28,7 @@ public class MembreController {
     }
 
     @GetMapping
-    public List<Membre> getAll(HttpServletRequest request) {
+    public List<MembreResponse> getAll(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String role = auth.getAuthorities().stream()
                 .findFirst()
@@ -37,14 +39,14 @@ public class MembreController {
             String authHeader = request.getHeader("Authorization");
             String token = authHeader.substring(7);
             Long siteId = jwtUtil.extractSiteId(token);
-            return membreService.getBySiteId(siteId);
+            return membreService.getBySiteIdAsResponse(siteId);
         }
-        return membreService.getAll();
+        return membreService.getAllAsResponse();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Membre> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(membreService.getById(id));
+    public ResponseEntity<MembreResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(membreService.getByIdAsResponse(id));
     }
 
     @GetMapping("/type/{type}")
@@ -58,8 +60,8 @@ public class MembreController {
     }
 
     @PostMapping
-    public ResponseEntity<Membre> create(@RequestBody Membre membre) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(membreService.create(membre));
+    public ResponseEntity<MembreResponse> create(@RequestBody MembreCreateRequest membre) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(membreService.createFromRequest(membre));
     }
 
     @PutMapping("/{id}")

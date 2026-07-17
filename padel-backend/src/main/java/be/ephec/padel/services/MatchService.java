@@ -70,7 +70,7 @@ public class MatchService {
     }
 
     @Transactional
-    public Match create(Match match) { // Modifications post-remise : règles métier
+    public Match create(Match match) {
         // Chargement complet de l'organisateur
         Long organisateurId = match.getOrganisateur().getId();
         var organisateur = membreRepository.findById(organisateurId)

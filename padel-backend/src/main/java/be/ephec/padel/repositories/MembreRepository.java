@@ -14,4 +14,8 @@ public interface MembreRepository extends JpaRepository<Membre, Long> {
     List<Membre> findBySiteId(Long siteId);
 
     Optional<Membre> findByMatricule(String matricule);
+
+    Optional<Membre> findByEmail(String email);
+
+    Optional<Membre> findTopByMatriculeStartingWithOrderByMatriculeDesc(String prefix);
 }

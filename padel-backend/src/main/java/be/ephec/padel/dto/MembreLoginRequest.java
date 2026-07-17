@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class MembreLoginRequest {
     private String matricule;
+    private String motDePasse; // nullable — pour compatibilité avec les anciens membres
 }

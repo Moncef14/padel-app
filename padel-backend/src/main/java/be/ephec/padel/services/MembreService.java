@@ -1,24 +1,30 @@
 package be.ephec.padel.services;
 import be.ephec.padel.dto.MembreCreateRequest;
 import be.ephec.padel.dto.MembreResponse;
+import be.ephec.padel.dto.RegisterRequest;
 import be.ephec.padel.models.Membre;
 import be.ephec.padel.models.Site;
 import be.ephec.padel.repositories.MembreRepository;
 import be.ephec.padel.models.enums.TypeMembre;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class MembreService {
 
     private final MembreRepository membreRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public MembreService(MembreRepository membreRepository) {
+    public MembreService(MembreRepository membreRepository, BCryptPasswordEncoder passwordEncoder) {
         this.membreRepository = membreRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Membre> getAll() {
@@ -109,5 +115,48 @@ public class MembreService {
 
     public MembreResponse createFromRequest(MembreCreateRequest dto) {
         return toResponse(create(toEntity(dto)));
+    }
+
+    public String genererMatricule(TypeMembre type) {
+        String prefix = switch (type) {
+            case GLOBAL -> "G";
+            case SITE -> "S";
+            case LIBRE -> "L";
+        };
+        Optional<Membre> dernier = membreRepository
+                .findTopByMatriculeStartingWithOrderByMatriculeDesc(prefix);
+        int prochain = dernier
+                .map(m -> Integer.parseInt(m.getMatricule().substring(1)) + 1)
+                .orElse(1);
+        return String.format("%s%04d", prefix, prochain);
+    }
+
+    @Transactional
+    public Membre inscrire(RegisterRequest dto) {
+        if (membreRepository.findByEmail(dto.getEmail()).isPresent())
+            throw new RuntimeException("Un membre avec cet email existe déjà");
+
+        Site site = null;
+        if (dto.getType() == TypeMembre.SITE) {
+            if (dto.getSiteId() == null)
+                throw new RuntimeException("Un membre SITE doit être rattaché à un site");
+            site = new Site();
+            site.setId(dto.getSiteId());
+        }
+
+        String matricule = genererMatricule(dto.getType());
+
+        Membre membre = Membre.builder()
+                .matricule(matricule)
+                .nom(dto.getNom())
+                .prenom(dto.getPrenom())
+                .email(dto.getEmail())
+                .motDePasse(passwordEncoder.encode(dto.getMotDePasse()))
+                .type(dto.getType())
+                .site(site)
+                .soldeDu(BigDecimal.ZERO)
+                .build();
+
+        return membreRepository.save(membre);
     }
 }

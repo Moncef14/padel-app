@@ -32,6 +32,9 @@ public class Membre {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = true)
+    private String motDePasse;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TypeMembre type;

@@ -173,6 +173,30 @@ public class MatchService {
         return savedMatch;
     }
 
+    @Transactional
+    public MatchResponse annuler(Long matchId, Long demandeurId, String roleDemandeur) {
+        // Chargement du match depuis la DB
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match non trouvé : " + matchId));
+
+        // Un match déjà annulé ne peut pas l'être à nouveau
+        if (match.getStatut() == StatutMatch.ANNULE)
+            throw new RuntimeException("Ce match est déjà annulé");
+
+        // Seul l'organisateur ou un administrateur peut annuler
+        boolean estOrganisateur = match.getOrganisateur().getId().equals(demandeurId);
+        boolean estAdmin = roleDemandeur != null &&
+                (roleDemandeur.equals("ADMIN_GLOBAL") || roleDemandeur.equals("ADMIN_SITE"));
+
+        if (!estOrganisateur && !estAdmin)
+            throw new RuntimeException("Seul l'organisateur ou un administrateur peut annuler ce match");
+
+        // Passage du statut en ANNULE
+        match.setStatut(StatutMatch.ANNULE);
+
+        return toResponse(matchRepository.save(match));
+    }
+
     public Match update(Long id, Match match) {
         Match existing = getById(id);
         existing.setTerrain(match.getTerrain());

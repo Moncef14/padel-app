@@ -203,6 +203,33 @@ public class InscriptionMatchService {
         return saved;
     }
 
+    // Quitter un match auquel on est inscrit (libère la place)
+    @Transactional
+    public void quitterMatch(Long inscriptionId, Long membreId) {
+        // Chargement de l'inscription
+        InscriptionMatch inscription = inscriptionMatchRepository.findById(inscriptionId)
+                .orElseThrow(() -> new RuntimeException("Inscription non trouvée : " + inscriptionId));
+
+        // Vérifier que c'est bien ce membre qui quitte
+        if (!inscription.getMembre().getId().equals(membreId))
+            throw new RuntimeException("Vous ne pouvez quitter que votre propre inscription");
+
+        // L'organisateur ne peut pas quitter — il doit annuler le match
+        Match match = inscription.getMatch();
+        if (match.getOrganisateur().getId().equals(membreId))
+            throw new RuntimeException("L'organisateur ne peut pas quitter le match — utilisez l'annulation");
+
+        // Passer l'inscription en ANNULE — la place se libère
+        inscription.setStatutPaiement(StatutPaiement.ANNULE);
+        inscriptionMatchRepository.save(inscription);
+
+        // Si le match était COMPLET, il repasse en EN_ATTENTE
+        if (match.getStatut() == StatutMatch.COMPLET) {
+            match.setStatut(StatutMatch.EN_ATTENTE);
+            matchRepository.save(match);
+        }
+    }
+
     public InscriptionMatchResponse toResponse(InscriptionMatch i) {
         return InscriptionMatchResponse.builder()
                 .id(i.getId())

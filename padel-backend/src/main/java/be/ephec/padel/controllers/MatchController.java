@@ -3,7 +3,9 @@ import be.ephec.padel.dto.MatchCreateRequest;
 import be.ephec.padel.dto.MatchResponse;
 import be.ephec.padel.models.Match;
 import be.ephec.padel.security.JwtUtil;
+import be.ephec.padel.services.AdministrateurService;
 import be.ephec.padel.services.MatchService;
+import be.ephec.padel.services.MembreService;
 import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.models.enums.TypeMatch;
 
@@ -22,10 +24,14 @@ public class MatchController {
 
     private final MatchService matchService;
     private final JwtUtil jwtUtil;
+    private final AdministrateurService administrateurService;
+    private final MembreService membreService;
 
-    public MatchController(MatchService matchService, JwtUtil jwtUtil) {
+    public MatchController(MatchService matchService, JwtUtil jwtUtil, AdministrateurService administrateurService, MembreService membreService) {
         this.matchService = matchService;
         this.jwtUtil = jwtUtil;
+        this.administrateurService = administrateurService;
+        this.membreService = membreService;
     }
 
     @GetMapping
@@ -81,5 +87,25 @@ public class MatchController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         matchService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/annuler")
+    public ResponseEntity<MatchResponse> annuler(@PathVariable Long id, HttpServletRequest request) {
+        // Extraction du demandeur depuis le token JWT
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        String username = jwtUtil.extractUsername(token);
+        String role = jwtUtil.extractRole(token);
+
+        // Le token porte soit un email d'admin, soit un matricule de membre
+        // On tente d'abord l'admin, puis on retombe sur le membre
+        Long demandeurId;
+        if (role != null) {
+            demandeurId = administrateurService.getByEmail(username).getId();
+        } else {
+            demandeurId = membreService.getByMatricule(username).getId();
+        }
+
+        return ResponseEntity.ok(matchService.annuler(id, demandeurId, role));
     }
 }

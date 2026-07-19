@@ -2,7 +2,9 @@ package be.ephec.padel.controllers;
 
 import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.security.SecurityConfig;
+import be.ephec.padel.services.AdministrateurService;
 import be.ephec.padel.services.MatchService;
+import be.ephec.padel.services.MembreService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,12 @@ class MatchControllerTest {
 
     @MockBean
     private JwtUtil jwtUtil;
+
+    @MockBean
+    private AdministrateurService administrateurService;
+
+    @MockBean
+    private MembreService membreService;
 
     @Test
     @WithAnonymousUser

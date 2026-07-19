@@ -36,6 +36,11 @@ public class MembreService {
                 .orElseThrow(() -> new RuntimeException("Membre non trouvé avec l'id : " + id));
     }
 
+    public Membre getByMatricule(String matricule) {
+        return membreRepository.findByMatricule(matricule)
+                .orElseThrow(() -> new RuntimeException("Membre non trouvé : " + matricule));
+    }
+
     public List<Membre> getByType(TypeMembre type) {
         return membreRepository.findByType(type);
     }

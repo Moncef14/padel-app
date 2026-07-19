@@ -1,8 +1,11 @@
 package be.ephec.padel.controllers;
 import be.ephec.padel.dto.InscriptionMatchResponse;
 import be.ephec.padel.models.InscriptionMatch;
+import be.ephec.padel.security.JwtUtil;
 import be.ephec.padel.services.InscriptionMatchService;
+import be.ephec.padel.services.MembreService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,13 @@ import java.util.List;
 public class InscriptionMatchController {
 
     private final InscriptionMatchService inscriptionMatchService;
+    private final JwtUtil jwtUtil;
+    private final MembreService membreService;
 
-    public InscriptionMatchController(InscriptionMatchService inscriptionMatchService) {
+    public InscriptionMatchController(InscriptionMatchService inscriptionMatchService, JwtUtil jwtUtil, MembreService membreService) {
         this.inscriptionMatchService = inscriptionMatchService;
+        this.jwtUtil = jwtUtil;
+        this.membreService = membreService;
     }
 
     @GetMapping
@@ -86,6 +93,19 @@ public class InscriptionMatchController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 inscriptionMatchService.toResponse(
                         inscriptionMatchService.inscrireEtPayer(matchId, membreId)));
+    }
+
+    @DeleteMapping("/{id}/quitter")
+    public ResponseEntity<Void> quitterMatch(@PathVariable Long id, HttpServletRequest request) {
+        // Extraction du membre connecté depuis le token JWT
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        String matricule = jwtUtil.extractUsername(token);
+
+        Long membreId = membreService.getByMatricule(matricule).getId();
+
+        inscriptionMatchService.quitterMatch(id, membreId);
+        return ResponseEntity.noContent().build();
     }
 
     public record InscrireJoueurRequest(Long matchId, Long membreId, Long organisateurId) {}

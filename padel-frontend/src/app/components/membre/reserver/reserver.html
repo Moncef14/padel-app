@@ -1,1 +1,53 @@
-<p>reserver works!</p>
+<div class="reserver-page">
+  <mat-card class="reserver-card">
+    <div class="reserver-header">
+      <h1>Réserver un match</h1>
+      <p class="subtitle">Choisissez votre créneau</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="reserver-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Type de match</mat-label>
+        <mat-select name="type" [(ngModel)]="type" required>
+          <mat-option [value]="TypeMatch.PRIVE">Privé — vous invitez vos joueurs</mat-option>
+          <mat-option [value]="TypeMatch.PUBLIC">Public — ouvert à tous les membres</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Site</mat-label>
+        <mat-select name="siteId" [(ngModel)]="siteId" (selectionChange)="onSiteChange()" required>
+          @for (site of sites(); track site.id) {
+            <mat-option [value]="site.id">{{ site.nom }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Terrain</mat-label>
+        <mat-select name="terrainId" [(ngModel)]="terrainId" required [disabled]="!siteId">
+          @for (terrain of terrains(); track terrain.id) {
+            <mat-option [value]="terrain.id">Terrain {{ terrain.numero }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date et heure</mat-label>
+        <input matInput type="datetime-local" name="dateHeure" [(ngModel)]="dateHeure" required>
+      </mat-form-field>
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Confirmer la réservation
+        }
+      </button>
+    </form>
+  </mat-card>
+</div>

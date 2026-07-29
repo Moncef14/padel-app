@@ -1,0 +1,53 @@
+.reserver-page {
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.reserver-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.reserver-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin: 0 0 4px 0;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.reserver-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-message {
+  color: #C62828;
+  font-size: 14px;
+  margin: 4px 0 8px 0;
+}
+
+.submit-button {
+  height: 44px;
+  margin-top: 8px;
+  font-weight: 500;
+}

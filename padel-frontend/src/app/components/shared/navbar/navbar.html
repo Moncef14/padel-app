@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <span class="brand-text">Padel EPHEC</span>
+  </div>
+
+  @if (auth.isMembre()) {
+    <div class="navbar-links">
+      <a routerLink="/membre/mes-matchs" routerLinkActive="active">Mes matchs</a>
+      <a routerLink="/membre/reserver" routerLinkActive="active">Réserver</a>
+      <a routerLink="/membre/publics" routerLinkActive="active">Matchs publics</a>
+    </div>
+  }
+
+  @if (auth.isAdmin()) {
+    <div class="navbar-links">
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/terrains" routerLinkActive="active">Terrains</a>
+      <a routerLink="/admin/horaires" routerLinkActive="active">Horaires</a>
+      <a routerLink="/admin/membres" routerLinkActive="active">Membres</a>
+      <a routerLink="/admin/matchs" routerLinkActive="active">Matchs</a>
+      <a routerLink="/admin/fermetures" routerLinkActive="active">Fermetures</a>
+      @if (auth.isAdminGlobal()) {
+        <a routerLink="/admin/sites" routerLinkActive="active">Sites</a>
+        <a routerLink="/admin/admins" routerLinkActive="active">Admins</a>
+      }
+    </div>
+  }
+
+  <div class="navbar-user">
+    @if (auth.currentUser(); as user) {
+      <span class="user-name">{{ user.prenom }} {{ user.nom }}</span>
+    }
+    <button mat-stroked-button (click)="logout()">Déconnexion</button>
+  </div>
+</nav>

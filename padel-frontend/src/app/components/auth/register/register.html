@@ -1,0 +1,68 @@
+<div class="register-page">
+  <mat-card class="register-card">
+    <div class="register-header">
+      <h1>Créer un compte</h1>
+      <p class="subtitle">Rejoignez Padel EPHEC</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Prénom</mat-label>
+          <input matInput type="text" name="prenom" [(ngModel)]="formulaire.prenom" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Nom</mat-label>
+          <input matInput type="text" name="nom" [(ngModel)]="formulaire.nom" required>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="formulaire.email" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput type="password" name="motDePasse" [(ngModel)]="formulaire.motDePasse" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Type de membre</mat-label>
+        <mat-select name="type" [(ngModel)]="formulaire.type" required>
+          <mat-option [value]="TypeMembre.GLOBAL">Global — accès à tous les sites</mat-option>
+          <mat-option [value]="TypeMembre.SITE">Site — accès à un site précis</mat-option>
+          <mat-option [value]="TypeMembre.LIBRE">Libre — sans engagement</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (afficherSite()) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Site</mat-label>
+          <mat-select name="siteId" [(ngModel)]="formulaire.siteId" required>
+            @for (site of sites(); track site.id) {
+              <mat-option [value]="site.id">{{ site.nom }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Créer mon compte
+        }
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <a routerLink="/login">J'ai déjà un compte</a>
+    </div>
+  </mat-card>
+</div>

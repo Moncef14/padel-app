@@ -1,0 +1,36 @@
+<div class="login-page">
+  <mat-card class="login-card">
+    <div class="login-header">
+      <h1>Padel EPHEC</h1>
+      <p class="subtitle">Connectez-vous à votre espace</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email ou matricule</mat-label>
+        <input matInput type="text" name="identifiant" [(ngModel)]="identifiant" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput type="password" name="motDePasse" [(ngModel)]="motDePasse">
+      </mat-form-field>
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Se connecter
+        }
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a routerLink="/register">Créer un compte membre</a>
+    </div>
+  </mat-card>
+</div>

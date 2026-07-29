@@ -1,1 +1,37 @@
-<p>mes-matchs works!</p>
+<div class="mes-matchs-page">
+  <div class="page-header">
+    <h1>Mes matchs</h1>
+    <a routerLink="/membre/reserver" mat-flat-button color="primary">
+      Réserver un match
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else if (matchs().length === 0) {
+    <p class="empty-text">Vous n'avez encore aucun match. Réservez-en un pour commencer !</p>
+  } @else {
+    <div class="matchs-grid">
+      @for (match of matchs(); track match.id) {
+        <mat-card class="match-card" [routerLink]="['/membre/match', match.id]">
+          <div class="match-header">
+            <span class="match-date">{{ match.dateHeure | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            <span class="badge" [class]="'badge-' + match.statut.toLowerCase()">
+              {{ libelleStatut(match.statut) }}
+            </span>
+          </div>
+          <div class="match-body">
+            <p class="match-site">{{ match.nomSite }} — Terrain {{ match.terrainNumero }}</p>
+            <p class="match-type">{{ match.type === TypeMatch.PRIVE ? 'Match privé' : 'Match public' }}</p>
+            @if (estOrganisateur(match)) {
+              <span class="organisateur-tag">Vous êtes l'organisateur</span>
+            }
+          </div>
+          <div class="match-footer">
+            <span class="match-montant">{{ match.montantTotal }}€</span>
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

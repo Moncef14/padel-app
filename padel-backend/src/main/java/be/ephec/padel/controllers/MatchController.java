@@ -58,6 +58,11 @@ public class MatchController {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    @GetMapping("/membre/{membreId}")
+    public List<MatchResponse> getByMembre(@PathVariable Long membreId) {
+        return matchService.getByMembreParticipantAsResponse(membreId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MatchResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(matchService.getByIdAsResponse(id));

@@ -265,4 +265,10 @@ public class MatchService {
     public MatchResponse createFromRequest(MatchCreateRequest dto) {
         return toResponse(create(toEntity(dto)));
     }
+
+    public List<MatchResponse> getByMembreParticipantAsResponse(Long membreId) {
+        return matchRepository.findByMembreParticipant(membreId).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
 }

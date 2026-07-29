@@ -4,6 +4,8 @@ import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.models.enums.TypeMatch;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,4 +27,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     boolean existsByTerrainIdAndDateHeureBetweenAndStatutNot(Long terrainId, LocalDateTime debut, LocalDateTime fin, StatutMatch statut);
 
     List<Match> findByTerrain_SiteId(Long siteId);
+
+    @Query("SELECT DISTINCT m FROM Match m " +
+           "LEFT JOIN InscriptionMatch i ON i.match = m " +
+           "WHERE m.organisateur.id = :membreId OR i.membre.id = :membreId " +
+           "ORDER BY m.dateHeure DESC")
+    List<Match> findByMembreParticipant(@Param("membreId") Long membreId);
 }

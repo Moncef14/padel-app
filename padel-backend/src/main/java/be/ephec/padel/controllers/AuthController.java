@@ -69,6 +69,7 @@ public class AuthController {
                 .map(membre -> {
                     String token = jwtUtil.generateToken(membre.getMatricule());
                     return ResponseEntity.ok(new MembreLoginResponse(
+                            membre.getId(),
                             token,
                             membre.getMatricule(),
                             membre.getType().name(),
@@ -86,6 +87,7 @@ public class AuthController {
             String token = jwtUtil.generateToken(membre.getMatricule());
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new RegisterResponse(
+                            membre.getId(),
                             token,
                             membre.getMatricule(),
                             membre.getNom(),

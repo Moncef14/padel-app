@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class MembreLoginResponse {
+    private Long id;
     private String token;
     private String matricule;
     private String type;

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RegisterResponse {
+    private Long id;
     private String token;
     private String matricule;
     private String nom;

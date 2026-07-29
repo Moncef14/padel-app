@@ -52,6 +52,7 @@ export class Auth {
     return this.http.post<LoginResponse>(`${API_URL}/login`, request).pipe(
       tap(response => {
         this.saveToStorage({
+          id: null, // un admin n'a pas d'id de membre
           token: response.token,
           role: response.role,
           matricule: null,
@@ -68,6 +69,7 @@ export class Auth {
     return this.http.post<MembreLoginResponse>(`${API_URL}/membre`, request).pipe(
       tap(response => {
         this.saveToStorage({
+          id: response.id,
           token: response.token,
           role: null,
           matricule: response.matricule,
@@ -84,6 +86,7 @@ export class Auth {
     return this.http.post<RegisterResponse>(`${API_URL}/register`, request).pipe(
       tap(response => {
         this.saveToStorage({
+          id: response.id,
           token: response.token,
           role: null,
           matricule: response.matricule,
@@ -102,5 +105,9 @@ export class Auth {
 
   getToken(): string | null {
     return this.authState()?.token ?? null;
+  }
+
+  getMembreId(): number | null {
+    return this.authState()?.id ?? null;
   }
 }

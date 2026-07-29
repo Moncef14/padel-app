@@ -19,6 +19,7 @@ export interface MembreLoginRequest {
 }
 
 export interface MembreLoginResponse {
+  id: number;
   token: string;
   matricule: string;
   type: string;
@@ -37,6 +38,7 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
+  id: number;
   token: string;
   matricule: string;
   nom: string;
@@ -46,6 +48,7 @@ export interface RegisterResponse {
 
 // Ce qu'on stocke localement pour savoir qui est connecté
 export interface AuthState {
+  id: number | null;
   token: string;
   role: string | null;      // ADMIN_GLOBAL / ADMIN_SITE si admin, null si membre
   matricule: string | null; // rempli si membre connecté

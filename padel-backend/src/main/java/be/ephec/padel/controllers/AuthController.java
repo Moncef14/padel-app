@@ -74,7 +74,8 @@ public class AuthController {
                             membre.getMatricule(),
                             membre.getType().name(),
                             membre.getNom(),
-                            membre.getPrenom()
+                            membre.getPrenom(),
+                            membre.getSite() != null ? membre.getSite().getId() : null
                     ));
                 })
                 .orElse(ResponseEntity.status(401).build());
@@ -92,7 +93,8 @@ public class AuthController {
                             membre.getMatricule(),
                             membre.getNom(),
                             membre.getPrenom(),
-                            membre.getType()
+                            membre.getType(),
+                            membre.getSite() != null ? membre.getSite().getId() : null
                     )
             );
         } catch (RuntimeException e) {

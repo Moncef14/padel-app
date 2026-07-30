@@ -12,4 +12,5 @@ public class MembreLoginResponse {
     private String type;
     private String nom;
     private String prenom;
+    private Long siteId;
 }

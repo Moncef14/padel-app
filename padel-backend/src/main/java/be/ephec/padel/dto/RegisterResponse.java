@@ -17,4 +17,5 @@ public class RegisterResponse {
     private String nom;
     private String prenom;
     private TypeMembre type;
+    private Long siteId;
 }

@@ -16,16 +16,20 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Site</mat-label>
-        <mat-select name="siteId" [(ngModel)]="siteId" (selectionChange)="onSiteChange()" required>
+        <mat-select name="siteId" [(ngModel)]="siteId" (selectionChange)="onSiteChange()"
+                    required [disabled]="siteVerrouille()">
           @for (site of sites(); track site.id) {
             <mat-option [value]="site.id">{{ site.nom }}</mat-option>
           }
         </mat-select>
+        @if (siteVerrouille()) {
+          <mat-hint>Votre site d'affiliation</mat-hint>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Terrain</mat-label>
-        <mat-select name="terrainId" [(ngModel)]="terrainId" required [disabled]="!siteId">
+        <mat-select name="terrainId" [(ngModel)]="terrainId" (selectionChange)="onTerrainOuDateChange()" required [disabled]="!siteId">
           @for (terrain of terrains(); track terrain.id) {
             <mat-option [value]="terrain.id">Terrain {{ terrain.numero }}</mat-option>
           }
@@ -33,15 +37,38 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Date et heure</mat-label>
-        <input matInput type="datetime-local" name="dateHeure" [(ngModel)]="dateHeure" required>
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" name="date" [(ngModel)]="date"
+               [matDatepickerFilter]="dateFilter" [min]="dateMin()"
+               (dateChange)="onTerrainOuDateChange()" required [disabled]="!terrainId">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+
+      @if (loadingCreneaux()) {
+        <p class="creneaux-loading">Chargement des créneaux...</p>
+      } @else if (creneaux().length > 0) {
+        <div class="creneaux-section">
+          <p class="creneaux-label">Créneaux disponibles</p>
+          <div class="creneaux-grid">
+            @for (creneau of creneaux(); track creneau.heure) {
+              <button type="button" class="creneau-btn"
+                      [class.selected]="heureChoisie === creneau.heure"
+                      [class.indisponible]="!creneau.disponible"
+                      [disabled]="!creneau.disponible"
+                      (click)="choisirCreneau(creneau)">
+                {{ creneau.heure }}
+              </button>
+            }
+          </div>
+        </div>
+      }
 
       @if (errorMessage()) {
         <p class="error-message">{{ errorMessage() }}</p>
       }
 
-      <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="loading()">
+      <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="loading() || !heureChoisie">
         @if (loading()) {
           <mat-spinner diameter="20"></mat-spinner>
         } @else {

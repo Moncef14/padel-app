@@ -56,6 +56,7 @@ export class Auth {
           token: response.token,
           role: response.role,
           matricule: null,
+          type: null,
           nom: response.nom,
           prenom: '',
           siteId: null // le siteId est dans le JWT, pas dans la réponse — le backend le lit du token
@@ -73,9 +74,10 @@ export class Auth {
           token: response.token,
           role: null,
           matricule: response.matricule,
+          type: response.type,
           nom: response.nom,
           prenom: response.prenom,
-          siteId: null
+          siteId: response.siteId
         });
       })
     );
@@ -90,9 +92,10 @@ export class Auth {
           token: response.token,
           role: null,
           matricule: response.matricule,
+          type: response.type,
           nom: response.nom,
           prenom: response.prenom,
-          siteId: null
+          siteId: response.siteId
         });
       })
     );
@@ -109,5 +112,13 @@ export class Auth {
 
   getMembreId(): number | null {
     return this.authState()?.id ?? null;
+  }
+
+  getMembreType(): string | null {
+    return this.authState()?.type ?? null;
+  }
+
+  getMembreSiteId(): number | null {
+    return this.authState()?.siteId ?? null;
   }
 }

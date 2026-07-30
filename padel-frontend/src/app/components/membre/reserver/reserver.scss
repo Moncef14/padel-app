@@ -51,3 +51,54 @@
   margin-top: 8px;
   font-weight: 500;
 }
+
+.creneaux-section {
+  margin: 8px 0 16px 0;
+}
+
+.creneaux-label {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.creneaux-loading {
+  font-size: 13px;
+  color: #666;
+  margin: 8px 0;
+}
+
+.creneaux-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.creneau-btn {
+  padding: 8px 4px;
+  border: 1px solid #E0E0E0;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(.indisponible) {
+    border-color: #1B6B4A;
+  }
+
+  &.selected {
+    background-color: #1B6B4A;
+    color: #FFFFFF;
+    border-color: #1B6B4A;
+  }
+
+  &.indisponible {
+    background-color: #F5F5F5;
+    color: #BBB;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+}

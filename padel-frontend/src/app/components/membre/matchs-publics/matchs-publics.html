@@ -1,1 +1,49 @@
-<p>matchs-publics works!</p>
+<div class="matchs-publics-page">
+  <div class="page-header">
+    <h1>Matchs publics disponibles</h1>
+    <p class="subtitle">Rejoignez un match et payez votre place — premier payé, premier servi</p>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else if (matchs().length === 0) {
+    <p class="empty-text">Aucun match public disponible pour le moment.</p>
+  } @else {
+    <div class="matchs-grid">
+      @for (match of matchs(); track match.id) {
+        <mat-card class="match-card">
+          <div class="match-header">
+            <span class="match-date">{{ match.dateHeure | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            @if (match.statut === StatutMatch.DEVENU_PUBLIC) {
+              <span class="badge badge-devenu_public">Devenu public</span>
+            }
+          </div>
+          <div class="match-body">
+            <p class="match-site">{{ match.nomSite }} — Terrain {{ match.terrainNumero }}</p>
+            <p class="match-organisateur">Organisé par {{ match.prenomOrganisateur }} {{ match.nomOrganisateur }}</p>
+          </div>
+          <div class="match-footer">
+            <span class="match-montant">15€ la place</span>
+            @if (!estOrganisateur(match)) {
+              <button mat-flat-button color="primary"
+                      [disabled]="rejoindreEnCours() === match.id"
+                      (click)="rejoindre(match)">
+                @if (rejoindreEnCours() === match.id) {
+                  En cours...
+                } @else {
+                  Rejoindre et payer
+                }
+              </button>
+            } @else {
+              <span class="organisateur-tag">Votre match</span>
+            }
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

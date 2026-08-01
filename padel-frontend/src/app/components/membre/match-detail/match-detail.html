@@ -1,1 +1,56 @@
-<p>match-detail works!</p>
+<div class="match-detail-page">
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else if (match(); as m) {
+    <a routerLink="/membre/mes-matchs" class="back-link">← Retour à mes matchs</a>
+
+    <mat-card class="detail-card">
+      <div class="detail-header">
+        <h1>{{ m.dateHeure | date: 'dd/MM/yyyy à HH:mm' }}</h1>
+        <span class="badge" [class]="'badge-' + m.statut.toLowerCase()">{{ m.statut }}</span>
+      </div>
+
+      <div class="detail-infos">
+        <p><strong>Lieu :</strong> {{ m.nomSite }} — Terrain {{ m.terrainNumero }}</p>
+        <p><strong>Type :</strong> {{ m.type === 'PRIVE' ? 'Match privé' : 'Match public' }}</p>
+        <p><strong>Organisateur :</strong> {{ m.prenomOrganisateur }} {{ m.nomOrganisateur }}</p>
+        <p><strong>Montant total :</strong> {{ m.montantTotal }}€</p>
+      </div>
+
+      <div class="joueurs-section">
+        <p class="section-title">Joueurs inscrits ({{ inscriptions().length }}/4)</p>
+        @for (inscription of inscriptions(); track inscription.id) {
+          <div class="joueur-row">
+            <span>{{ inscription.prenomMembre }} {{ inscription.nomMembre }}</span>
+            <span class="badge-paiement" [class]="'badge-' + inscription.statutPaiement.toLowerCase()">
+              {{ inscription.statutPaiement === StatutPaiement.PAYE ? 'Payé' :
+                 inscription.statutPaiement === StatutPaiement.INSCRIT ? 'En attente de paiement' : 'Annulé' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      <div class="actions">
+        @if (peutPayer()) {
+          <button mat-flat-button color="primary" [disabled]="actionEnCours()" (click)="payer()">
+            Payer ma place (15€)
+          </button>
+        }
+        @if (peutQuitter()) {
+          <button mat-stroked-button [disabled]="actionEnCours()" (click)="quitter()">
+            Quitter le match
+          </button>
+        }
+        @if (estOrganisateur() && m.statut !== 'ANNULE') {
+          <button mat-stroked-button color="warn" [disabled]="actionEnCours()" (click)="annuler()">
+            Annuler le match
+          </button>
+        }
+      </div>
+    </mat-card>
+  }
+</div>

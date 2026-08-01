@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Confirmer le paiement</h2>
+<mat-dialog-content>
+  <p class="dialog-text">
+    Vous êtes sur le point de payer votre place pour un montant de
+    <strong>{{ data.montant }}€</strong>.
+  </p>
+  <p class="dialog-note">Ceci est une simulation de paiement à des fins de démonstration.</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="annuler()">Annuler</button>
+  <button mat-flat-button color="primary" (click)="confirmer()">Confirmer le paiement</button>
+</mat-dialog-actions>

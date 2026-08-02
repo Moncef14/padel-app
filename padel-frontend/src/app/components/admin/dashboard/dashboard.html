@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<div class="dashboard-page">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p class="subtitle">
+      @if (auth.isAdminGlobal()) {
+        Vue d'ensemble de tous les sites
+      } @else {
+        Vue d'ensemble de votre site
+      }
+    </p>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else if (stats(); as s) {
+    <div class="kpi-grid">
+      <mat-card class="kpi-card">
+        <p class="kpi-label">Chiffre d'affaires</p>
+        <p class="kpi-value">{{ s.chiffreAffaires }}€</p>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <p class="kpi-label">Taux d'occupation</p>
+        <p class="kpi-value">{{ s.tauxOccupation }}%</p>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <p class="kpi-label">Total matchs</p>
+        <p class="kpi-value">{{ s.totalMatchs }}</p>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <p class="kpi-label">Total membres</p>
+        <p class="kpi-value">{{ s.totalMembres }}</p>
+      </mat-card>
+    </div>
+
+    <div class="statuts-section">
+      <p class="section-title">Répartition des matchs</p>
+      <div class="statuts-grid">
+        <div class="statut-item">
+          <span class="statut-dot statut-en-attente"></span>
+          <span>En attente</span>
+          <span class="statut-count">{{ s.matchsEnAttente }}</span>
+        </div>
+        <div class="statut-item">
+          <span class="statut-dot statut-complet"></span>
+          <span>Complets</span>
+          <span class="statut-count">{{ s.matchsComplets }}</span>
+        </div>
+        <div class="statut-item">
+          <span class="statut-dot statut-annule"></span>
+          <span>Annulés</span>
+          <span class="statut-count">{{ s.matchsAnnules }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,101 @@
+.dashboard-page {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin: 0 0 4px 0;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.loading-text {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.kpi-card {
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 20px;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1B6B4A;
+  margin: 0;
+}
+
+.statuts-section {
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 20px;
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.statuts-grid {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.statut-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #1A1A1A;
+}
+
+.statut-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+
+  &.statut-en-attente { background-color: #E65100; }
+  &.statut-complet { background-color: #2E7D32; }
+  &.statut-annule { background-color: #C62828; }
+}
+
+.statut-count {
+  font-weight: 600;
+  margin-left: 4px;
+}

@@ -1,1 +1,59 @@
-<p>matchs works!</p>
+<div class="matchs-page">
+  <div class="page-header">
+    <h1>Matchs</h1>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else {
+    <table mat-table [dataSource]="matchs()" class="matchs-table">
+      <ng-container matColumnDef="dateHeure">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let m">{{ m.dateHeure | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="site">
+        <th mat-header-cell *matHeaderCellDef>Lieu</th>
+        <td mat-cell *matCellDef="let m">{{ m.nomSite }} — T{{ m.terrainNumero }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="organisateur">
+        <th mat-header-cell *matHeaderCellDef>Organisateur</th>
+        <td mat-cell *matCellDef="let m">{{ m.prenomOrganisateur }} {{ m.nomOrganisateur }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let m">{{ m.type === 'PRIVE' ? 'Privé' : 'Public' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let m">
+          <span class="badge" [class]="'badge-' + m.statut.toLowerCase()">{{ m.statut }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="montant">
+        <th mat-header-cell *matHeaderCellDef>Montant</th>
+        <td mat-cell *matCellDef="let m">{{ m.montantTotal }}€</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let m">
+          @if (m.statut !== StatutMatch.ANNULE) {
+            <button mat-stroked-button color="warn" (click)="annuler(m)">Annuler</button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  }
+</div>

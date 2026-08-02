@@ -1,0 +1,65 @@
+.matchs-page {
+  padding: 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin: 0;
+  }
+}
+
+.error-message {
+  color: #C62828;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.matchs-table {
+  width: 100%;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th {
+    background-color: #F5F5F5;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  td, th {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  button {
+    font-size: 12px;
+  }
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 10px;
+
+  &.badge-complet { background-color: #E8F5E9; color: #2E7D32; }
+  &.badge-en_attente { background-color: #FFF3E0; color: #E65100; }
+  &.badge-annule { background-color: #FFEBEE; color: #C62828; }
+  &.badge-devenu_public { background-color: #E3F2FD; color: #1565C0; }
+}

@@ -50,6 +50,9 @@ public class MembreService {
     }
 
     public Membre create(Membre membre) {
+        if (membreRepository.findByEmail(membre.getEmail()).isPresent()) {
+            throw new RuntimeException("Un membre avec cet email existe déjà");
+        }
         return membreRepository.save(membre);
     }
 
@@ -87,7 +90,7 @@ public class MembreService {
 
     public Membre toEntity(MembreCreateRequest dto) {
         Membre membre = Membre.builder()
-                .matricule(dto.getMatricule())
+                .matricule(genererMatricule(dto.getType()))
                 .nom(dto.getNom())
                 .prenom(dto.getPrenom())
                 .email(dto.getEmail())

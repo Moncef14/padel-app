@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class MembreCreateRequest {
-    private String matricule;
     private String nom;
     private String prenom;
     private String email;

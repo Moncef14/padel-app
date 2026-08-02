@@ -1,0 +1,79 @@
+.terrains-page {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin: 0;
+  }
+}
+
+.error-message {
+  color: #C62828;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.site-groupe {
+  margin-bottom: 24px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.site-titre {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0;
+  padding: 12px 16px;
+  background-color: #F5F5F5;
+}
+
+.terrains-liste {
+  padding: 4px 0;
+}
+
+.terrain-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid #F0F0F0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.terrain-numero {
+  font-size: 14px;
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.terrain-actions {
+  display: flex;
+  gap: 8px;
+
+  button {
+    font-size: 12px;
+  }
+}

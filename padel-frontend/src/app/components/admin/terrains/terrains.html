@@ -1,1 +1,33 @@
-<p>terrains works!</p>
+<div class="terrains-page">
+  <div class="page-header">
+    <h1>Terrains</h1>
+    <button mat-flat-button color="primary" (click)="ouvrirCreation()">
+      Nouveau terrain
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else {
+    @for (groupe of groupesParSite(); track groupe.nomSite) {
+      <div class="site-groupe">
+        <h2 class="site-titre">{{ groupe.nomSite }}</h2>
+        <div class="terrains-liste">
+          @for (t of groupe.terrains; track t.id) {
+            <div class="terrain-row">
+              <span class="terrain-numero">Terrain {{ t.numero }}</span>
+              <div class="terrain-actions">
+                <button mat-stroked-button (click)="ouvrirEdition(t)">Modifier</button>
+                <button mat-stroked-button color="warn" (click)="supprimer(t)">Supprimer</button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

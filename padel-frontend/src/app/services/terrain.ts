@@ -19,4 +19,16 @@ export class TerrainService {
   getBySiteId(siteId: number): Observable<Terrain[]> {
     return this.http.get<Terrain[]>(`${API_URL}/site/${siteId}`);
   }
+
+  create(terrain: { numero: number; site: { id: number } }): Observable<Terrain> {
+    return this.http.post<Terrain>(API_URL, terrain);
+  }
+
+  update(id: number, terrain: { numero: number; site: { id: number } }): Observable<Terrain> {
+    return this.http.put<Terrain>(`${API_URL}/${id}`, terrain);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${API_URL}/${id}`);
+  }
 }

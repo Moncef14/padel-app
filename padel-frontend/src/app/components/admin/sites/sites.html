@@ -1,1 +1,49 @@
-<p>sites works!</p>
+<div class="sites-page">
+  <div class="page-header">
+    <h1>Sites</h1>
+    <button mat-flat-button color="primary" (click)="ouvrirCreation()">
+      Nouveau site
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else {
+    <table mat-table [dataSource]="sites()" class="sites-table">
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let site">{{ site.nom }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="horaires">
+        <th mat-header-cell *matHeaderCellDef>Horaires</th>
+        <td mat-cell *matCellDef="let site">{{ site.heureOuverture }} - {{ site.heureFermeture }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="annee">
+        <th mat-header-cell *matHeaderCellDef>Année</th>
+        <td mat-cell *matCellDef="let site">{{ site.annee }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actif">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let site">
+          <span class="badge" [class.badge-actif]="site.actif" [class.badge-inactif]="!site.actif">
+            {{ site.actif ? 'Actif' : 'Inactif' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let site">
+          <button mat-stroked-button (click)="ouvrirEdition(site)">Modifier</button>
+          <button mat-stroked-button color="warn" (click)="supprimer(site)">Supprimer</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  }
+</div>

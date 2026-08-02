@@ -91,8 +91,14 @@ export class Terrains implements OnInit {
 
   supprimer(terrain: Terrain): void {
     if (!confirm(`Supprimer le terrain ${terrain.numero} ?`)) return;
+    this.errorMessage.set(null);
     this.terrainService.delete(terrain.id).subscribe({
-      next: () => this.chargerTerrains()
+      next: () => this.chargerTerrains(),
+      error: () => {
+        this.errorMessage.set(
+          `Impossible de supprimer le terrain ${terrain.numero} : des matchs y sont encore rattachés.`
+        );
+      }
     });
   }
 }

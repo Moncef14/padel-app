@@ -29,11 +29,24 @@ public class TerrainService {
     }
 
     public Terrain create(Terrain terrain) {
+        if (terrainRepository.existsByNumeroAndSiteId(terrain.getNumero(), terrain.getSite().getId())) {
+            throw new RuntimeException("Le terrain numéro " + terrain.getNumero() +
+                " existe déjà pour ce site");
+        }
         return terrainRepository.save(terrain);
     }
 
     public Terrain update(Long id, Terrain terrain) {
         Terrain existing = getById(id);
+
+        boolean changement = !existing.getNumero().equals(terrain.getNumero())
+                || !existing.getSite().getId().equals(terrain.getSite().getId());
+
+        if (changement && terrainRepository.existsByNumeroAndSiteId(terrain.getNumero(), terrain.getSite().getId())) {
+            throw new RuntimeException("Le terrain numéro " + terrain.getNumero() +
+                " existe déjà pour ce site");
+        }
+
         existing.setNumero(terrain.getNumero());
         existing.setSite(terrain.getSite());
         return terrainRepository.save(existing);

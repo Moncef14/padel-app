@@ -8,4 +8,6 @@ import java.util.List;
 public interface TerrainRepository extends JpaRepository<Terrain, Long> {
 
     List<Terrain> findBySiteId(Long siteId);
+
+    boolean existsByNumeroAndSiteId(Integer numero, Long siteId);
 }

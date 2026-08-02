@@ -20,7 +20,7 @@ public class StatsController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping
+    @GetMapping("/dashboard")
     public DashboardStatsResponse getStats(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);

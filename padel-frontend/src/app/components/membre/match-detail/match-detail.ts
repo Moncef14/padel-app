@@ -11,6 +11,7 @@ import { MatchResponse } from '../../../models/match.model';
 import { InscriptionMatchResponse } from '../../../models/inscription.model';
 import { StatutPaiement } from '../../../models/enums.model';
 import { ConfirmPaymentDialog } from '../../shared/confirm-payment-dialog/confirm-payment-dialog';
+import { NotificationService } from '../../../services/notification';
 
 @Component({
   selector: 'app-match-detail',
@@ -37,7 +38,8 @@ export class MatchDetail implements OnInit {
     private matchService: MatchService,
     private inscriptionService: InscriptionService,
     public auth: Auth,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -102,6 +104,7 @@ export class MatchDetail implements OnInit {
         next: () => {
           this.actionEnCours.set(false);
           this.chargerDonnees();
+          this.notification.succes('Paiement effectué avec succès !');
         },
         error: () => {
           this.actionEnCours.set(false);
@@ -120,6 +123,7 @@ export class MatchDetail implements OnInit {
     this.inscriptionService.quitterMatch(inscription.id).subscribe({
       next: () => {
         this.actionEnCours.set(false);
+        this.notification.succes('Vous avez quitté le match.');
         this.router.navigate(['/membre/mes-matchs']);
       },
       error: () => {
@@ -136,6 +140,7 @@ export class MatchDetail implements OnInit {
       next: () => {
         this.actionEnCours.set(false);
         this.chargerDonnees();
+        this.notification.succes('Match annulé avec succès.');
       },
       error: () => {
         this.actionEnCours.set(false);

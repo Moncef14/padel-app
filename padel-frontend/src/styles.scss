@@ -45,3 +45,15 @@ body {
 .mat-mdc-dialog-content {
   padding-top: 8px !important;
 }
+
+.notification-succes {
+  --mdc-snackbar-container-color: #1B6B4A;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #FFFFFF;
+}
+
+.notification-erreur {
+  --mdc-snackbar-container-color: #C62828;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #FFFFFF;
+}

@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatchService } from '../../../services/match';
 import { InscriptionService } from '../../../services/inscription';
 import { Auth } from '../../../services/auth';
+import { NotificationService } from '../../../services/notification';
 import { MatchResponse } from '../../../models/match.model';
 import { StatutMatch } from '../../../models/enums.model';
 
@@ -27,7 +28,8 @@ export class MatchsPublics implements OnInit {
   constructor(
     private matchService: MatchService,
     private inscriptionService: InscriptionService,
-    private auth: Auth
+    private auth: Auth,
+    private notification: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +59,7 @@ export class MatchsPublics implements OnInit {
     this.inscriptionService.inscrireEtPayer(match.id, membreId).subscribe({
       next: () => {
         this.rejoindreEnCours.set(null);
+        this.notification.succes('Vous avez rejoint le match avec succès !');
         // On recharge la liste — le match rejoint peut être devenu
         // complet et doit disparaître.
         this.chargerMatchs();
@@ -66,6 +69,7 @@ export class MatchsPublics implements OnInit {
         this.errorMessage.set(
           'Impossible de rejoindre ce match — il est peut-être déjà complet ou vous y êtes déjà inscrit.'
         );
+        this.notification.erreur('Impossible de rejoindre ce match.');
       }
     });
   }

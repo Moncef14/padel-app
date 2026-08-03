@@ -11,10 +11,14 @@
 }
 
 .navbar-brand {
-  .brand-text {
+  .navbar-brand-title {
     font-size: 18px;
     font-weight: 600;
-    color: #1A1A1A;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #1B6B4A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 

@@ -63,3 +63,7 @@
   &.badge-annule { background-color: #FFEBEE; color: #C62828; }
   &.badge-devenu_public { background-color: #E3F2FD; color: #1565C0; }
 }
+
+::ng-deep .mat-mdc-tab-body-wrapper {
+  padding-top: 16px;
+}

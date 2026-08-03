@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatchService } from '../../../services/match';
 import { MatchResponse } from '../../../models/match.model';
 import { StatutMatch } from '../../../models/enums.model';
@@ -9,7 +10,7 @@ import { StatutMatch } from '../../../models/enums.model';
 @Component({
   selector: 'app-matchs',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatTableModule],
+  imports: [CommonModule, MatButtonModule, MatTableModule, MatTabsModule],
   templateUrl: './matchs.html',
   styleUrl: './matchs.scss'
 })
@@ -19,6 +20,18 @@ export class Matchs implements OnInit {
   loading = signal(true);
   errorMessage = signal<string | null>(null);
   displayedColumns = ['dateHeure', 'site', 'organisateur', 'type', 'statut', 'montant', 'actions'];
+
+  readonly matchsActifs = computed(() =>
+    this.matchs().filter(m =>
+      m.statut !== StatutMatch.ANNULE && new Date(m.dateHeure) >= new Date()
+    )
+  );
+
+  readonly matchsHistorique = computed(() =>
+    this.matchs().filter(m =>
+      m.statut === StatutMatch.ANNULE || new Date(m.dateHeure) < new Date()
+    )
+  );
 
   readonly StatutMatch = StatutMatch;
 

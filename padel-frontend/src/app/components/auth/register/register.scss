@@ -20,11 +20,15 @@
   text-align: center;
   margin-bottom: 32px;
 
-  h1 {
+  .brand-title {
     font-size: 24px;
     font-weight: 600;
-    color: #1A1A1A;
+    letter-spacing: -0.5px;
     margin: 0 0 4px 0;
+    background: linear-gradient(135deg, #1A1A1A 0%, #1B6B4A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .subtitle {

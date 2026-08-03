@@ -5,6 +5,7 @@ import { membreGuard } from './guards/membre-guard';
 import { adminGuard } from './guards/admin-guard';
 import { adminGlobalGuard } from './guards/admin-global-guard';
 
+import { Home } from './components/home/home';
 import { Login } from './components/auth/login/login';
 import { Register } from './components/auth/register/register';
 
@@ -28,7 +29,7 @@ import { Admins } from './components/admin/admins/admins';
 //   restreintes à adminGlobalGuard (create/delete sites, gestion admins)
 //   pour respecter @PreAuthorize("hasRole('ADMIN_GLOBAL')") côté backend
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', component: Home },
 
   // Authentification (publiques)
   { path: 'login', component: Login },

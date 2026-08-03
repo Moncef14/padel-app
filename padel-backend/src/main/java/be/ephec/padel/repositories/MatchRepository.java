@@ -30,7 +30,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     @Query("SELECT DISTINCT m FROM Match m " +
            "LEFT JOIN InscriptionMatch i ON i.match = m " +
-           "WHERE m.organisateur.id = :membreId OR i.membre.id = :membreId " +
+           "WHERE m.organisateur.id = :membreId " +
+           "OR (i.membre.id = :membreId AND i.statutPaiement != be.ephec.padel.models.enums.StatutPaiement.ANNULE) " +
            "ORDER BY m.dateHeure DESC")
     List<Match> findByMembreParticipant(@Param("membreId") Long membreId);
 }

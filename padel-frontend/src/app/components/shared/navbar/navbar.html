@@ -15,12 +15,11 @@
     <div class="navbar-links">
       <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
       <a routerLink="/admin/terrains" routerLinkActive="active">Terrains</a>
-      <a routerLink="/admin/horaires" routerLinkActive="active">Horaires</a>
       <a routerLink="/admin/membres" routerLinkActive="active">Membres</a>
       <a routerLink="/admin/matchs" routerLinkActive="active">Matchs</a>
       <a routerLink="/admin/fermetures" routerLinkActive="active">Fermetures</a>
       @if (auth.isAdminGlobal()) {
-        <a routerLink="/admin/sites" routerLinkActive="active">Sites</a>
+        <a routerLink="/admin/sites" routerLinkActive="active">Sites & Horaires</a>
         <a routerLink="/admin/admins" routerLinkActive="active">Admins</a>
       }
     </div>

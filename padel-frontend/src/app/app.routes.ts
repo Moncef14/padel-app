@@ -20,7 +20,6 @@ import { Membres } from './components/admin/membres/membres';
 import { Matchs } from './components/admin/matchs/matchs';
 import { Fermetures } from './components/admin/fermetures/fermetures';
 import { Admins } from './components/admin/admins/admins';
-import { Horaires } from './components/admin/horaires/horaires';
 
 // Structure de la SPA en miroir des controllers backend :
 // - routes publiques pour l'authentification
@@ -57,7 +56,6 @@ export const routes: Routes = [
       { path: 'dashboard', component: Dashboard },
       { path: 'sites', component: Sites, canActivate: [adminGlobalGuard] },
       { path: 'terrains', component: Terrains },
-      { path: 'horaires', component: Horaires },
       { path: 'membres', component: Membres },
       { path: 'matchs', component: Matchs },
       { path: 'fermetures', component: Fermetures },

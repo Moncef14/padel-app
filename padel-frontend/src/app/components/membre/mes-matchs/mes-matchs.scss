@@ -101,3 +101,11 @@
     color: #1A1A1A;
   }
 }
+
+.historique {
+  opacity: 0.75;
+}
+
+::ng-deep .mat-mdc-tab-body-wrapper {
+  padding-top: 16px;
+}

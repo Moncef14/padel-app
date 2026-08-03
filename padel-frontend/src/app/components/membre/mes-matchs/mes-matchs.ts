@@ -1,9 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatchService } from '../../../services/match';
 import { Auth } from '../../../services/auth';
 import { MatchResponse } from '../../../models/match.model';
@@ -12,7 +13,7 @@ import { StatutMatch, TypeMatch } from '../../../models/enums.model';
 @Component({
   selector: 'app-mes-matchs',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatChipsModule],
+  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatChipsModule, MatTabsModule],
   templateUrl: './mes-matchs.html',
   styleUrl: './mes-matchs.scss'
 })
@@ -20,6 +21,18 @@ export class MesMatchs implements OnInit {
 
   matchs = signal<MatchResponse[]>([]);
   loading = signal(true);
+
+  readonly matchsActifs = computed(() =>
+    this.matchs().filter(m =>
+      m.statut !== StatutMatch.ANNULE && new Date(m.dateHeure) >= new Date()
+    )
+  );
+
+  readonly matchsHistorique = computed(() =>
+    this.matchs().filter(m =>
+      m.statut === StatutMatch.ANNULE || new Date(m.dateHeure) < new Date()
+    )
+  );
 
   // Exposés au template pour les comparaisons de statut/type
   readonly StatutMatch = StatutMatch;

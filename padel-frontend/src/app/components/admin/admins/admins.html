@@ -1,1 +1,53 @@
-<p>admins works!</p>
+<div class="admins-page">
+  <div class="page-header">
+    <h1>Administrateurs</h1>
+    <button mat-flat-button color="primary" (click)="ouvrirCreation()">
+      Nouvel administrateur
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else {
+    <table mat-table [dataSource]="admins()" class="admins-table">
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let a">{{ a.prenom }} {{ a.nom }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let a">{{ a.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Rôle</th>
+        <td mat-cell *matCellDef="let a">
+          <span class="badge" [class.badge-global]="a.role === 'ADMIN_GLOBAL'">
+            {{ a.role === 'ADMIN_GLOBAL' ? 'Admin Global' : 'Admin Site' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="site">
+        <th mat-header-cell *matHeaderCellDef>Site</th>
+        <td mat-cell *matCellDef="let a">{{ a.nomSite || '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let a">
+          <button mat-stroked-button (click)="ouvrirEdition(a)">Modifier</button>
+          <button mat-stroked-button color="warn" (click)="supprimer(a)">Supprimer</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  }
+</div>

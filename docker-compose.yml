@@ -1,0 +1,72 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: padel-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "PadelAdmin2026!"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"PadelAdmin2026!\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  create-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: padel-create-db
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    entrypoint: >
+      bash -c "
+      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P 'PadelAdmin2026!' -C -Q \"IF DB_ID('padeldb') IS NULL CREATE DATABASE padeldb\"
+      "
+
+  backend:
+    build: ./padel-backend
+    container_name: padel-backend
+    depends_on:
+      create-db:
+        condition: service_completed_successfully
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=padeldb;encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "PadelAdmin2026!"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 8080 && wget -q -O- http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: padel-sqlserver-init
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ./init.sql:/init.sql
+    entrypoint: >
+      bash -c "
+      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P 'PadelAdmin2026!' -C -d padeldb -i /init.sql
+      "
+
+  frontend:
+    build: ./padel-frontend
+    container_name: padel-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  sqlserver-data:

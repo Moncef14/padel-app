@@ -1,10 +1,13 @@
 package be.ephec.padel.services;
 import be.ephec.padel.dto.DashboardStatsResponse;
+import be.ephec.padel.dto.StatsParSiteResponse;
 import be.ephec.padel.models.Match;
+import be.ephec.padel.models.Site;
 import be.ephec.padel.models.enums.StatutMatch;
 import be.ephec.padel.repositories.InscriptionMatchRepository;
 import be.ephec.padel.repositories.MatchRepository;
 import be.ephec.padel.repositories.MembreRepository;
+import be.ephec.padel.repositories.SiteRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -18,11 +21,13 @@ public class StatsService {
     private final MatchRepository matchRepository;
     private final MembreRepository membreRepository;
     private final InscriptionMatchRepository inscriptionMatchRepository;
+    private final SiteRepository siteRepository;
 
-    public StatsService(MatchRepository matchRepository, MembreRepository membreRepository, InscriptionMatchRepository inscriptionMatchRepository) {
+    public StatsService(MatchRepository matchRepository, MembreRepository membreRepository, InscriptionMatchRepository inscriptionMatchRepository, SiteRepository siteRepository) {
         this.matchRepository = matchRepository;
         this.membreRepository = membreRepository;
         this.inscriptionMatchRepository = inscriptionMatchRepository;
+        this.siteRepository = siteRepository;
     }
 
     public DashboardStatsResponse getStats(Long siteId) {
@@ -61,5 +66,21 @@ public class StatsService {
                 .matchsComplets(complets)
                 .matchsAnnules(annules)
                 .build();
+    }
+
+    public List<StatsParSiteResponse> getStatsParSite() {
+        List<Site> sites = siteRepository.findAll();
+        return sites.stream()
+                .map(site -> {
+                    DashboardStatsResponse stats = getStats(site.getId());
+                    return StatsParSiteResponse.builder()
+                            .siteId(site.getId())
+                            .nomSite(site.getNom())
+                            .totalMatchs(stats.getTotalMatchs())
+                            .chiffreAffaires(stats.getChiffreAffaires())
+                            .tauxOccupation(stats.getTauxOccupation())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }

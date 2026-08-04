@@ -13,6 +13,7 @@ import { MesMatchs } from './components/membre/mes-matchs/mes-matchs';
 import { MatchDetail } from './components/membre/match-detail/match-detail';
 import { Reserver } from './components/membre/reserver/reserver';
 import { MatchsPublics } from './components/membre/matchs-publics/matchs-publics';
+import { Profil } from './components/membre/profil/profil';
 
 import { Dashboard } from './components/admin/dashboard/dashboard';
 import { Sites } from './components/admin/sites/sites';
@@ -44,7 +45,8 @@ export const routes: Routes = [
       { path: 'mes-matchs', component: MesMatchs },
       { path: 'match/:id', component: MatchDetail },
       { path: 'reserver', component: Reserver },
-      { path: 'publics', component: MatchsPublics }
+      { path: 'publics', component: MatchsPublics },
+      { path: 'profil', component: Profil }
     ]
   },
 

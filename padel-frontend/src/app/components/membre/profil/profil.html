@@ -1,0 +1,74 @@
+<div class="profil-page">
+  <div class="page-header">
+    <h1>Mon profil</h1>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-text">Chargement...</p>
+  } @else if (membre(); as m) {
+    <mat-card class="profil-card">
+      <div class="profil-infos">
+        <div class="info-row">
+          <span class="info-label">Nom complet</span>
+          <span class="info-value">{{ m.prenom }} {{ m.nom }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Matricule</span>
+          <span class="info-value">{{ m.matricule }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ m.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Type de membre</span>
+          <span class="info-value">{{ m.type }}</span>
+        </div>
+        @if (m.nomSite) {
+          <div class="info-row">
+            <span class="info-label">Site affilié</span>
+            <span class="info-value">{{ m.nomSite }}</span>
+          </div>
+        }
+        <div class="info-row">
+          <span class="info-label">Matchs joués</span>
+          <span class="info-value">{{ nombreMatchs() }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Solde dû</span>
+          <span class="info-value" [class.solde-positif]="m.soldeDu > 0">
+            {{ m.soldeDu }}€
+          </span>
+        </div>
+        @if (m.soldeDu > 0) {
+          <p class="solde-note">
+            Ce montant sera automatiquement ajouté lors de votre prochain
+            paiement, conformément aux règles de réservation.
+          </p>
+        }
+        @if (m.penaliteJusquAu) {
+          <div class="info-row">
+            <span class="info-label">Pénalité</span>
+            <span class="info-value penalite">
+              Jusqu'au {{ m.penaliteJusquAu | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+        }
+      </div>
+    </mat-card>
+
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+
+    <div class="danger-zone">
+      <p class="danger-title">Zone de suppression</p>
+      <p class="danger-text">
+        La suppression de votre compte est définitive et irréversible.
+      </p>
+      <button mat-stroked-button color="warn" (click)="supprimerCompte()">
+        Supprimer mon compte
+      </button>
+    </div>
+  }
+</div>

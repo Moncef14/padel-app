@@ -1,0 +1,97 @@
+.profil-page {
+  padding: 32px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin: 0;
+  }
+}
+
+.loading-text {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.profil-card {
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 14px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.info-label {
+  color: #666;
+}
+
+.info-value {
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.solde-positif {
+  color: #C62828;
+  font-weight: 600;
+}
+
+.solde-note {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+  margin: 8px 0 0 0;
+  padding: 8px 12px;
+  background-color: #FFF8E1;
+  border-radius: 6px;
+}
+
+.penalite {
+  color: #C62828;
+}
+
+.error-message {
+  color: #C62828;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.danger-zone {
+  border: 1px solid #FFCDD2;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #FFF5F5;
+}
+
+.danger-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #C62828;
+  margin: 0 0 4px 0;
+}
+
+.danger-text {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 12px 0;
+}

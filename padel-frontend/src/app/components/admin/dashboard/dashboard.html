@@ -55,5 +55,31 @@
         </div>
       </div>
     </div>
+
+    @if (auth.isAdminGlobal() && statsParSite().length > 0) {
+      <div class="comparaison-section">
+        <p class="section-title">Comparaison par site</p>
+        <table class="comparaison-table">
+          <thead>
+            <tr>
+              <th>Site</th>
+              <th>Matchs</th>
+              <th>Chiffre d'affaires</th>
+              <th>Occupation</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (site of statsParSite(); track site.siteId) {
+              <tr>
+                <td>{{ site.nomSite }}</td>
+                <td>{{ site.totalMatchs }}</td>
+                <td>{{ site.chiffreAffaires }}€</td>
+                <td>{{ site.tauxOccupation }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   }
 </div>

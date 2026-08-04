@@ -99,3 +99,44 @@
   font-weight: 600;
   margin-left: 4px;
 }
+
+.comparaison-section {
+  margin-top: 24px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 20px;
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.comparaison-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    padding: 8px 12px;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  td {
+    font-size: 13px;
+    color: #1A1A1A;
+    padding: 10px 12px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}

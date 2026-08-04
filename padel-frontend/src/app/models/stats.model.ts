@@ -8,3 +8,11 @@ export interface DashboardStats {
   matchsComplets: number;
   matchsAnnules: number;
 }
+
+export interface StatsParSite {
+  siteId: number;
+  nomSite: string;
+  totalMatchs: number;
+  chiffreAffaires: number;
+  tauxOccupation: number;
+}

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { StatsService } from '../../../services/stats';
 import { Auth } from '../../../services/auth';
-import { DashboardStats } from '../../../models/stats.model';
+import { DashboardStats, StatsParSite } from '../../../models/stats.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +15,7 @@ import { DashboardStats } from '../../../models/stats.model';
 export class Dashboard implements OnInit {
 
   stats = signal<DashboardStats | null>(null);
+  statsParSite = signal<StatsParSite[]>([]);
   loading = signal(true);
 
   constructor(private statsService: StatsService, public auth: Auth) {}
@@ -27,5 +28,11 @@ export class Dashboard implements OnInit {
       },
       error: () => this.loading.set(false)
     });
+
+    if (this.auth.isAdminGlobal()) {
+      this.statsService.getStatsParSite().subscribe({
+        next: (statsSites) => this.statsParSite.set(statsSites)
+      });
+    }
   }
 }

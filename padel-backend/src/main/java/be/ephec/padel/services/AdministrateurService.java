@@ -59,6 +59,15 @@ public class AdministrateurService {
     }
 
     public void delete(Long id) {
+        Administrateur admin = getById(id);
+
+        if (admin.getRole() == RoleAdmin.ADMIN_GLOBAL) {
+            long nombreAdminsGlobaux = administrateurRepository.findByRole(RoleAdmin.ADMIN_GLOBAL).size();
+            if (nombreAdminsGlobaux <= 1) {
+                throw new RuntimeException("Impossible de supprimer le dernier administrateur global du système");
+            }
+        }
+
         administrateurRepository.deleteById(id);
     }
 

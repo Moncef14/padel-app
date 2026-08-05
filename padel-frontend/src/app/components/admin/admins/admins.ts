@@ -66,7 +66,10 @@ export class Admins implements OnInit {
     this.errorMessage.set(null);
     this.adminService.delete(admin.id).subscribe({
       next: () => this.chargerAdmins(),
-      error: () => this.errorMessage.set('Impossible de supprimer cet administrateur.')
+      error: (err) => {
+        const message = err.error?.erreur || 'Impossible de supprimer cet administrateur.';
+        this.errorMessage.set(message);
+      }
     });
   }
 }

@@ -94,15 +94,15 @@ SET IDENTITY_INSERT matchs ON;
 
 INSERT INTO matchs (id, terrain_id, date_heure, type, organisateur_id, statut, montant_total, devenu_public_le) VALUES
     -- Match PUBLIC en attente de joueurs (terrain Ixelles)
-    (1, 1,  '2026-06-10 10:00:00', 'PUBLIC',  1, 'EN_ATTENTE',    60.00, NULL),
+    (1, 1,  '2026-09-05 10:00:00', 'PUBLIC',  1, 'EN_ATTENTE',    60.00, NULL),
     -- Match PRIVE complet (terrain Anderlecht)
-    (2, 4,  '2026-06-12 14:00:00', 'PRIVE',   3, 'COMPLET',       60.00, NULL),
+    (2, 4,  '2026-09-08 14:00:00', 'PRIVE',   3, 'COMPLET',       60.00, NULL),
     -- Match PRIVE annulé (terrain Uccle)
-    (3, 7,  '2026-06-15 18:00:00', 'PRIVE',   5, 'ANNULE',        60.00, NULL),
+    (3, 7,  '2026-09-10 18:00:00', 'PRIVE',   5, 'ANNULE',        60.00, NULL),
     -- Match PRIVE devenu public (terrain Woluwe)
-    (4, 11, '2026-06-20 09:00:00', 'PRIVE',   6, 'DEVENU_PUBLIC', 60.00, '2026-06-18 08:00:00'),
+    (4, 11, '2026-09-12 09:00:00', 'PRIVE',   6, 'DEVENU_PUBLIC', 60.00, '2026-09-10 08:00:00'),
     -- Match PUBLIC en attente (terrain Watermael)
-    (5, 14, '2026-06-25 16:00:00', 'PUBLIC',  7, 'EN_ATTENTE',    60.00, NULL);
+    (5, 14, '2026-09-15 16:00:00', 'PUBLIC',  7, 'EN_ATTENTE',    60.00, NULL);
 
 SET IDENTITY_INSERT matchs OFF;
 GO
@@ -114,20 +114,20 @@ SET IDENTITY_INSERT inscription_matchs ON;
 
 INSERT INTO inscription_matchs (id, match_id, membre_id, statut_paiement, montant_paye, date_paiement) VALUES
     -- Match 1 : PUBLIC EN_ATTENTE — Marie (org.) + Karim
-    (1,  1, 1,  'PAYE',     15.00, '2026-06-08 11:00:00'),
+    (1,  1, 1,  'PAYE',     15.00, '2026-09-03 11:00:00'),
     (2,  1, 2,  'INSCRIT',  0.00, NULL),
     -- Match 2 : PRIVE COMPLET — Elif (org.) + 3 joueurs
-    (3,  2, 3,  'PAYE',     15.00, '2026-06-10 09:00:00'),
-    (4,  2, 4,  'PAYE',     15.00, '2026-06-10 10:30:00'),
-    (5,  2, 8,  'PAYE',     15.00, '2026-06-11 08:00:00'),
-    (6,  2, 9,  'PAYE',     15.00, '2026-06-11 08:30:00'),
+    (3,  2, 3,  'PAYE',     15.00, '2026-09-06 09:00:00'),
+    (4,  2, 4,  'PAYE',     15.00, '2026-09-06 10:30:00'),
+    (5,  2, 8,  'PAYE',     15.00, '2026-09-07 08:00:00'),
+    (6,  2, 9,  'PAYE',     15.00, '2026-09-07 08:30:00'),
     -- Match 3 : PRIVE ANNULE — Sofia (org.) seule inscrite
     (7,  3, 5,  'INSCRIT',  0.00, NULL),
     -- Match 4 : DEVENU_PUBLIC — Marco (org.) + Anna
-    (8,  4, 6,  'PAYE',     15.00, '2026-06-17 09:00:00'),
+    (8,  4, 6,  'PAYE',     15.00, '2026-09-09 09:00:00'),
     (9,  4, 7,  'INSCRIT',  0.00, NULL),
     -- Match 5 : PUBLIC EN_ATTENTE — Anna (org.) + Fatima
-    (10, 5, 7,  'PAYE',     15.00, '2026-06-22 14:00:00'),
+    (10, 5, 7,  'PAYE',     15.00, '2026-09-12 14:00:00'),
     (11, 5, 10, 'INSCRIT',  0.00, NULL);
 
 SET IDENTITY_INSERT inscription_matchs OFF;
@@ -140,13 +140,13 @@ SET IDENTITY_INSERT jours_fermeture ON;
 
 INSERT INTO jours_fermeture (id, date, site_id) VALUES
     -- Jours fériés belges (fermeture globale, site_id NULL)
-    (1, '2026-07-21', NULL),   -- Fête nationale belge
-    (2, '2026-08-15', NULL),   -- Assomption
-    (3, '2026-11-01', NULL),   -- Toussaint
-    (4, '2026-12-25', NULL),   -- Noël
-    -- Fermetures spécifiques à des sites
-    (5, '2026-08-03', 1),      -- Ixelles : travaux de rénovation
-    (6, '2026-08-03', 3);      -- Uccle : travaux de rénovation
+    (1, '2026-08-15', NULL),   -- Assomption
+    (2, '2026-11-01', NULL),   -- Toussaint
+    (3, '2026-12-25', NULL),   -- Noël
+    -- Fermetures spécifiques d'entretien
+    (4, '2026-09-20', NULL),   -- Fermeture globale : entretien général
+    (5, '2026-09-25', 1),      -- Ixelles : rénovation terrain
+    (6, '2026-09-28', 3);      -- Uccle : travaux
 
 SET IDENTITY_INSERT jours_fermeture OFF;
 GO

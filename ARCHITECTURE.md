@@ -1,105 +1,143 @@
 # Architecture du projet Padel
 
+## Vue d'ensemble
+
+Application de gestion de réservations de terrains de padel, multi-sites,
+avec deux interfaces : membre (réservation, paiement) et administrateur
+(gestion des sites, terrains, membres, statistiques).
+
+Le projet est composé de 3 services conteneurisés via Docker :
+- **Backend** : API REST Spring Boot
+- **Frontend** : Application Angular servie par Nginx
+- **Base de données** : SQL Server
+
+---
+
 ## Backend — Spring Boot
 
-### Organisation générale
+### Organisation par couche
 
-Le backend suit une architecture **feature-based** : chaque domaine métier est regroupé dans son propre package sous `be.ephec.padel.<feature>`. Chaque package contient exactement trois couches :
+Le backend est structuré **par couche technique**, chaque couche
+regroupant tous les domaines métier :
 
 ```
 be.ephec.padel/
-├── site/
-│   ├── Site.java               ← Entité JPA
-│   ├── SiteRepository.java     ← Accès données (Spring Data JPA)
-│   ├── SiteService.java        ← Logique métier
-│   └── SiteController.java     ← API REST
-├── terrain/
-├── membre/
-├── match/
-├── inscription/
-├── admin/
-└── fermeture/
+├── PadelBackendApplication.java
+├── GlobalExceptionHandler.java
+├── controllers/       ← Points d'entrée REST
+├── services/           ← Logique métier (+ SchedulerService, StatsService)
+├── repositories/        ← Accès données (Spring Data JPA)
+├── models/
+│   ├── (entités JPA)
+│   └── enums/           ← TypeMembre, TypeMatch, StatutMatch, StatutPaiement, RoleAdmin
+├── dto/                 ← DTOs Request/Response
+└── security/            ← JWT, configuration Spring Security, OpenAPI
 ```
 
 ### Couches
 
 | Couche | Rôle |
 |---|---|
-| **Entity** | Mapping objet-relationnel via JPA/Hibernate. Annotations Lombok (`@Data`, `@Builder`, etc.) pour réduire le boilerplate. |
-| **Repository** | Interface `JpaRepository<T, ID>` — Spring Data génère les requêtes SQL à partir des noms de méthodes. |
-| **Service** | Logique métier, orchestration, gestion des erreurs (`RuntimeException` si entité non trouvée). |
-| **Controller** | Exposition REST avec `@RestController`. Retourne `ResponseEntity` pour contrôler les statuts HTTP. |
+| **Controller** | Réception des requêtes HTTP, délégation au Service, retour `ResponseEntity`. Aucune logique métier. |
+| **Service** | Logique métier, règles de réservation, transactions (`@Transactional`). |
+| **Repository** | `JpaRepository<T, ID>` — requêtes dérivées et JPQL personnalisées. |
+| **DTO** | Sépare les objets exposés par l'API des entités JPA (évite les références circulaires, cache les données sensibles). |
 
-### Features et entités
+### Entités principales
 
-| Package | Entité principale | Relations |
-|---|---|---|
-| `site` | `Site` | — |
-| `terrain` | `Terrain` | `@ManyToOne` → `Site` |
-| `membre` | `Membre` | `@ManyToOne` → `Site` (nullable) |
-| `match` | `Match` | `@ManyToOne` → `Terrain`, `Membre` |
-| `inscription` | `InscriptionMatch` | `@ManyToOne` → `Match`, `Membre` |
-| `admin` | `Administrateur` | `@ManyToOne` → `Site` (nullable) |
-| `fermeture` | `JourFermeture` | `@ManyToOne` → `Site` (nullable = fermeture globale) |
+| Entité | Relations |
+|---|---|
+| `Site` | — |
+| `Terrain` | `@ManyToOne` → `Site` (contrainte d'unicité numéro+site) |
+| `Membre` | `@ManyToOne` → `Site` (nullable selon type GLOBAL/SITE/LIBRE) |
+| `Administrateur` | `@ManyToOne` → `Site` (nullable selon rôle ADMIN_GLOBAL/ADMIN_SITE) |
+| `Match` | `@ManyToOne` → `Terrain`, `Membre` (organisateur) |
+| `InscriptionMatch` | `@ManyToOne` → `Match`, `Membre` |
+| `JourFermeture` | `@ManyToOne` → `Site` (nullable = fermeture globale) |
+
+### Fonctionnalités métier clés
+
+- **Scheduler** (`SchedulerService`) : tâche planifiée quotidienne (23h59)
+  qui bascule les matchs privés incomplets en public, libère les places
+  non payées, applique les pénalités.
+- **Statistiques** (`StatsService`) : chiffre d'affaires, taux d'occupation,
+  répartition des matchs, globales ou par site.
+- **Sécurité JWT** : token contenant le rôle et le site (pour les admins),
+  filtre de validation à chaque requête, routes protégées par défaut.
+- **Droits différenciés** : `@PreAuthorize` + filtrage par site pour
+  distinguer ADMIN_GLOBAL et ADMIN_SITE.
 
 ### Frameworks et librairies backend
 
 | Librairie | Usage |
 |---|---|
-| Spring Boot 3 | Framework principal |
-| Spring Web | API REST (`@RestController`, `@RequestMapping`) |
-| Spring Data JPA | Accès base de données |
-| Hibernate | Implémentation JPA / ORM |
-| Lombok | Réduction du boilerplate (`@Data`, `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`) |
-| Jakarta Persistence | Annotations JPA (`@Entity`, `@ManyToOne`, `@JoinColumn`, etc.) |
-| Springdoc OpenAPI | Génération automatique de la documentation Swagger |
+| Spring Boot 3.5 | Framework principal |
+| Spring Web | API REST |
+| Spring Data JPA / Hibernate | Accès base de données, ORM |
+| Spring Security | Authentification JWT, autorisations par rôle |
+| Spring Boot Actuator | Endpoint de santé pour le healthcheck Docker |
+| Lombok | Réduction du boilerplate |
+| jjwt | Génération et validation des tokens JWT |
+| Springdoc OpenAPI | Documentation Swagger générée automatiquement |
 
 ### Documentation API
+Swagger UI : http://localhost:8080/swagger-ui.html
 
-Swagger UI disponible à : [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+### Tests
+32 tests unitaires (services, controllers `@WebMvcTest`, repositories
+`@DataJpaTest` + H2). Lancement : `./mvnw test`
 
 ---
 
 ## Frontend — Angular
 
-### Organisation générale
-
-Le frontend suit une architecture **feature-based** avec séparation des responsabilités :
+### Organisation
 
 ```
-src/
-├── app/
-│   ├── core/
-│   │   ├── guards/         ← Protection des routes (authentification, rôles)
-│   │   ├── interceptors/   ← Ajout automatique du token JWT aux requêtes HTTP
-│   │   └── services/       ← Services partagés (auth, etc.)
-│   ├── features/
-│   │   ├── site/
-│   │   ├── terrain/
-│   │   ├── membre/
-│   │   ├── match/
-│   │   ├── inscription/
-│   │   ├── admin/
-│   │   └── fermeture/
-│   └── shared/
-│       └── components/     ← Composants réutilisables
+src/app/
+├── models/           ← Interfaces TypeScript (miroir des DTOs backend)
+├── services/          ← Appels HTTP vers l'API
+├── guards/            ← Protection des routes (auth, membre, admin, admin-global)
+├── interceptors/       ← Ajout automatique du token JWT
+├── components/
+│   ├── auth/            (login, register)
+│   ├── shared/           (navbar, notification, confirm-payment-dialog)
+│   ├── membre/           (mes-matchs, match-detail, reserver, matchs-publics, profil)
+│   ├── admin/            (dashboard, sites, terrains, membres, matchs, fermetures, admins)
+│   └── home/
+└── app.routes.ts
 ```
 
-### Couches
+### Fonctionnalités notables
 
-| Couche | Rôle |
-|---|---|
-| **Components** | Affichage et interaction utilisateur. Chaque feature possède ses propres composants (liste, détail, formulaire). |
-| **Services** | Communication avec l'API REST via `HttpClient`. Un service par feature. |
-| **Guards** | Contrôle d'accès aux routes selon l'état d'authentification ou le rôle de l'utilisateur. |
-| **Interceptors** | Injection automatique du token JWT dans les en-têtes HTTP de chaque requête sortante. |
+- **Authentification unique adaptative** : détection automatique email
+  (admin) vs matricule (membre).
+- **Sélecteur de créneaux visuel** : calendrier avec dates grisées selon
+  le délai minimum du type de membre, créneaux déjà réservés indisponibles.
+- **Notifications centralisées** : `NotificationService` (snackbar).
+- **Onglets Actifs/Historique** sur les listes de matchs.
+- **Statistiques comparatives par site** sur le dashboard ADMIN_GLOBAL.
 
 ### Frameworks et librairies frontend
 
 | Librairie | Usage |
 |---|---|
-| Angular | Framework principal (composants, routing, DI) |
-| Angular HttpClient | Appels HTTP vers le backend |
-| Angular Router | Navigation et protection des routes |
-| RxJS | Programmation réactive (Observables) |
-| Angular Forms | Formulaires réactifs (`ReactiveFormsModule`) |
+| Angular 22 | Framework principal (standalone components, signals) |
+| Angular Material | Composants UI |
+| Angular HttpClient | Appels HTTP |
+| Angular Router | Navigation et guards |
+
+### Tests
+39 tests unitaires (Vitest). Lancement : `ng test`
+
+---
+
+## Infrastructure — Docker
+
+4 services orchestrés via `docker-compose.yml` :
+1. **sqlserver** — base SQL Server 2022
+2. **create-db** — création de la base `padeldb`
+3. **backend** — API Spring Boot (healthcheck via Actuator)
+4. **sqlserver-init** — seeding automatique via `init.sql`, exécuté
+   après création des tables par Hibernate
+5. **frontend** — Angular servi par Nginx

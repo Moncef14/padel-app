@@ -38,7 +38,7 @@ interface Creneau {
 })
 export class Reserver {
 
-  readonly TypeMatch = TypeMatch;
+  readonly typeMatch = TypeMatch;
 
   type: TypeMatch = TypeMatch.PRIVE;
   siteId: number | null = null;

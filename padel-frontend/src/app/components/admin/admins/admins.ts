@@ -109,11 +109,11 @@ export class Admins implements OnInit {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Rôle</mat-label>
         <mat-select [(ngModel)]="formulaire.role" required>
-          <mat-option [value]="RoleAdmin.ADMIN_GLOBAL">Admin Global</mat-option>
-          <mat-option [value]="RoleAdmin.ADMIN_SITE">Admin Site</mat-option>
+          <mat-option [value]="roleAdmin.ADMIN_GLOBAL">Admin Global</mat-option>
+          <mat-option [value]="roleAdmin.ADMIN_SITE">Admin Site</mat-option>
         </mat-select>
       </mat-form-field>
-      @if (formulaire.role === RoleAdmin.ADMIN_SITE) {
+      @if (formulaire.role === roleAdmin.ADMIN_SITE) {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Site</mat-label>
           <mat-select [(ngModel)]="formulaire.siteId" required>
@@ -139,7 +139,7 @@ export class Admins implements OnInit {
 })
 export class AdminFormDialog {
 
-  readonly RoleAdmin = RoleAdmin;
+  readonly roleAdmin = RoleAdmin;
 
   formulaire: any;
   sites = signal<Site[]>([]);

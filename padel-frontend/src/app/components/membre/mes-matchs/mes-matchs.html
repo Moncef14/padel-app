@@ -25,7 +25,7 @@
                 </div>
                 <div class="match-body">
                   <p class="match-site">{{ match.nomSite }} — Terrain {{ match.terrainNumero }}</p>
-                  <p class="match-type">{{ match.type === TypeMatch.PRIVE ? 'Match privé' : 'Match public' }}</p>
+                  <p class="match-type">{{ match.type === typeMatch.PRIVE ? 'Match privé' : 'Match public' }}</p>
                   @if (estOrganisateur(match)) {
                     <span class="organisateur-tag">Vous êtes l'organisateur</span>
                   }
@@ -54,7 +54,7 @@
                 </div>
                 <div class="match-body">
                   <p class="match-site">{{ match.nomSite }} — Terrain {{ match.terrainNumero }}</p>
-                  <p class="match-type">{{ match.type === TypeMatch.PRIVE ? 'Match privé' : 'Match public' }}</p>
+                  <p class="match-type">{{ match.type === typeMatch.PRIVE ? 'Match privé' : 'Match public' }}</p>
                   @if (estOrganisateur(match)) {
                     <span class="organisateur-tag">Vous étiez l'organisateur</span>
                   }

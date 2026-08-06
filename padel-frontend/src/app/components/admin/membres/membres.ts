@@ -102,12 +102,12 @@ export class Membres implements OnInit {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Type</mat-label>
         <mat-select [(ngModel)]="formulaire.type" required>
-          <mat-option [value]="TypeMembre.GLOBAL">Global</mat-option>
-          <mat-option [value]="TypeMembre.SITE">Site</mat-option>
-          <mat-option [value]="TypeMembre.LIBRE">Libre</mat-option>
+          <mat-option [value]="typeMembre.GLOBAL">Global</mat-option>
+          <mat-option [value]="typeMembre.SITE">Site</mat-option>
+          <mat-option [value]="typeMembre.LIBRE">Libre</mat-option>
         </mat-select>
       </mat-form-field>
-      @if (formulaire.type === TypeMembre.SITE) {
+      @if (formulaire.type === typeMembre.SITE) {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Site</mat-label>
           <mat-select [(ngModel)]="formulaire.siteId" required>
@@ -133,7 +133,7 @@ export class Membres implements OnInit {
 })
 export class MembreFormDialog {
 
-  readonly TypeMembre = TypeMembre;
+  readonly typeMembre = TypeMembre;
 
   formulaire: any;
   sites = signal<Site[]>([]);

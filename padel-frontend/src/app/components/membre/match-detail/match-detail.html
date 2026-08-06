@@ -23,8 +23,8 @@
           <div class="joueur-row">
             <span>{{ inscription.prenomMembre }} {{ inscription.nomMembre }}</span>
             <span class="badge-paiement" [class]="'badge-' + inscription.statutPaiement.toLowerCase()">
-              {{ inscription.statutPaiement === StatutPaiement.PAYE ? 'Payé' :
-                 inscription.statutPaiement === StatutPaiement.INSCRIT ? 'En attente de paiement' : 'Annulé' }}
+              {{ inscription.statutPaiement === statutPaiement.PAYE ? 'Payé' :
+                 inscription.statutPaiement === statutPaiement.INSCRIT ? 'En attente de paiement' : 'Annulé' }}
             </span>
           </div>
         }

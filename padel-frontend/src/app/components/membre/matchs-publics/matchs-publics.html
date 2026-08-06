@@ -18,7 +18,7 @@
         <mat-card class="match-card">
           <div class="match-header">
             <span class="match-date">{{ match.dateHeure | date: 'dd/MM/yyyy à HH:mm' }}</span>
-            @if (match.statut === StatutMatch.DEVENU_PUBLIC) {
+            @if (match.statut === statutMatch.DEVENU_PUBLIC) {
               <span class="badge badge-devenu_public">Devenu public</span>
             }
           </div>

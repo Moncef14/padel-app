@@ -33,7 +33,7 @@ export class Matchs implements OnInit {
     )
   );
 
-  readonly StatutMatch = StatutMatch;
+  readonly statutMatch = StatutMatch;
 
   constructor(private matchService: MatchService) {}
 

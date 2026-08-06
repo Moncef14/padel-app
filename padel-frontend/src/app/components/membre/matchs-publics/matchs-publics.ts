@@ -23,7 +23,7 @@ export class MatchsPublics implements OnInit {
   rejoindreEnCours = signal<number | null>(null); // id du match en cours de traitement
   errorMessage = signal<string | null>(null);
 
-  readonly StatutMatch = StatutMatch;
+  readonly statutMatch = StatutMatch;
 
   constructor(
     private matchService: MatchService,

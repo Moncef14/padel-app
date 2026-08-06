@@ -47,7 +47,7 @@ export class Register {
   errorMessage = signal<string | null>(null);
 
   // Le TypeMembre est exposé au template pour construire le <mat-select>
-  readonly TypeMembre = TypeMembre;
+  readonly typeMembre = TypeMembre;
 
   // N'affiche le sélecteur de site que pour un membre de type SITE —
   // reflète la règle métier backend (RegisterRequest.siteId obligatoire

@@ -35,8 +35,8 @@ export class MesMatchs implements OnInit {
   );
 
   // Exposés au template pour les comparaisons de statut/type
-  readonly StatutMatch = StatutMatch;
-  readonly TypeMatch = TypeMatch;
+  readonly statutMatch = StatutMatch;
+  readonly typeMatch = TypeMatch;
 
   constructor(private matchService: MatchService, private auth: Auth) {}
 

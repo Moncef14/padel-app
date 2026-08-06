@@ -28,7 +28,7 @@ export class MatchDetail implements OnInit {
   actionEnCours = signal(false);
   errorMessage = signal<string | null>(null);
 
-  readonly StatutPaiement = StatutPaiement;
+  readonly statutPaiement = StatutPaiement;
 
   private matchId!: number;
 

@@ -31,9 +31,9 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Type de membre</mat-label>
         <mat-select name="type" [(ngModel)]="formulaire.type" required>
-          <mat-option [value]="TypeMembre.GLOBAL">Global — accès à tous les sites</mat-option>
-          <mat-option [value]="TypeMembre.SITE">Site — accès à un site précis</mat-option>
-          <mat-option [value]="TypeMembre.LIBRE">Libre — sans engagement</mat-option>
+          <mat-option [value]="typeMembre.GLOBAL">Global — accès à tous les sites</mat-option>
+          <mat-option [value]="typeMembre.SITE">Site — accès à un site précis</mat-option>
+          <mat-option [value]="typeMembre.LIBRE">Libre — sans engagement</mat-option>
         </mat-select>
       </mat-form-field>
 

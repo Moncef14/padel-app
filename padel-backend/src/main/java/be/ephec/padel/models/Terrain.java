@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+// un numero de terrain n'est unique que dans son site (le terrain 1 existe sur chaque site)
 @Table(name = "terrains", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"numero", "site_id"})
 })

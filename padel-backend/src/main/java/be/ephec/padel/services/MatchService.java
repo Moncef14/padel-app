@@ -90,18 +90,18 @@ public class MatchService {
             throw new RuntimeException("Réservation impossible : la date doit être dans le futur");
         }
 
-        // Vérification solde dû
+        // un solde dû (place impayée d'un match précédent devenu public) doit être régularisé avant toute nouvelle réservation
         if (organisateur.getSoldeDu().compareTo(BigDecimal.ZERO) > 0) {
             throw new RuntimeException("Réservation impossible : solde dû de " + organisateur.getSoldeDu() + "€");
         }
 
-        // Vérification pénalité active
+        // pénalité posée par SchedulerService suite à un no-show (match basculé DEVENU_PUBLIC faute de paiement) : blocage temporaire distinct du solde
         if (organisateur.getPenaliteJusquAu() != null &&
                 organisateur.getPenaliteJusquAu().isAfter(LocalDate.now())) {
             throw new RuntimeException("Réservation impossible : pénalité active jusqu'au " + organisateur.getPenaliteJusquAu());
         }
 
-        // Vérification délai selon type de membre
+        // délai minimum de réservation croissant selon le type : GLOBAL (accès large) réserve plus tôt, LIBRE (accès limité) en dernier
         long joursAvant = java.time.temporal.ChronoUnit.DAYS.between(
                 LocalDate.now(), dateHeure.toLocalDate());
         switch (organisateur.getType()) {
@@ -119,7 +119,7 @@ public class MatchService {
             }
         }
 
-        // Vérification membre SITE dans son site uniquement
+        // contrepartie du délai réduit (14j) : un membre SITE n'a accès qu'aux terrains de son propre site
         if (organisateur.getType() == be.ephec.padel.models.enums.TypeMembre.SITE) {
             if (organisateur.getSite() == null ||
                     !organisateur.getSite().getId().equals(terrain.getSite().getId())) {
@@ -151,6 +151,7 @@ public class MatchService {
                     "Créneau non disponible : ce terrain est déjà réservé sur ce créneau");
 
         // AUTO-INSCRIPTION DE L'ORGANISATEUR
+        // l'organisateur paie sa place immédiatement (PAYE) au moment de la réservation, contrairement aux autres joueurs qui restent INSCRIT jusqu'à paiement
         InscriptionMatch inscriptionOrganisateur = InscriptionMatch.builder()
                 .match(match)
                 .membre(organisateur)
@@ -183,7 +184,7 @@ public class MatchService {
         if (match.getStatut() == StatutMatch.ANNULE)
             throw new RuntimeException("Ce match est déjà annulé");
 
-        // Seul l'organisateur ou un administrateur peut annuler
+        // Seul l'organisateur ou un administrateur peut annuler — les autres joueurs inscrits n'ont pas ce droit, ils doivent quitter (InscriptionMatchService.quitterMatch)
         boolean estOrganisateur = match.getOrganisateur().getId().equals(demandeurId);
         boolean estAdmin = roleDemandeur != null &&
                 (roleDemandeur.equals("ADMIN_GLOBAL") || roleDemandeur.equals("ADMIN_SITE"));

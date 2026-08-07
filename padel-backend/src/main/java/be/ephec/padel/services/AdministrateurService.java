@@ -41,6 +41,7 @@ public class AdministrateurService {
         return administrateurRepository.findByRole(role);
     }
 
+    // mot de passe jamais stocké en clair : hashé avant persistance, comme pour Membre.inscrire
     public Administrateur create(Administrateur administrateur) {
         administrateur.setMotDePasse(passwordEncoder.encode(administrateur.getMotDePasse()));
         return administrateurRepository.save(administrateur);
@@ -50,6 +51,7 @@ public class AdministrateurService {
         Administrateur existing = getById(id);
         existing.setNom(administrateur.getNom());
         existing.setEmail(administrateur.getEmail());
+        // ne re-hash que si un nouveau mot de passe est fourni, sinon un update sans mot de passe écraserait le hash existant par un champ vide
         if (administrateur.getMotDePasse() != null && !administrateur.getMotDePasse().isBlank()) {
             existing.setMotDePasse(passwordEncoder.encode(administrateur.getMotDePasse()));
         }
@@ -61,6 +63,7 @@ public class AdministrateurService {
     public void delete(Long id) {
         Administrateur admin = getById(id);
 
+        // évite de rendre le système inadministrable : il doit toujours rester au moins un ADMIN_GLOBAL pour gérer tous les sites
         if (admin.getRole() == RoleAdmin.ADMIN_GLOBAL) {
             long nombreAdminsGlobaux = administrateurRepository.findByRole(RoleAdmin.ADMIN_GLOBAL).size();
             if (nombreAdminsGlobaux <= 1) {

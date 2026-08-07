@@ -61,6 +61,7 @@ public class AuthController {
     @PostMapping("/membre")
     public ResponseEntity<MembreLoginResponse> loginMembre(
             @RequestBody MembreLoginRequest request) {
+        // motDePasse null = membre importé sans mot de passe défini (cf. Membre.motDePasse) : connexion autorisée sur matricule seul
         return membreRepository.findByMatricule(request.getMatricule())
                 .filter(m -> m.getMotDePasse() == null ||
                         passwordEncoder.matches(request.getMotDePasse() != null ?

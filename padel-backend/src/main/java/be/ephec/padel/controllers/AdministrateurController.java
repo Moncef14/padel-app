@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admins")
+// gestion des comptes admin réservée aux ADMIN_GLOBAL : un ADMIN_SITE ne doit pas pouvoir créer/modifier d'autres administrateurs
 @PreAuthorize("hasRole('ADMIN_GLOBAL')")
 public class AdministrateurController {
 

@@ -17,5 +17,6 @@ public interface MembreRepository extends JpaRepository<Membre, Long> {
 
     Optional<Membre> findByEmail(String email);
 
+    // MembreService.genererMatricule : trouve le dernier matricule d'un prefixe (G/S/L) pour incrementer le numero suivant
     Optional<Membre> findTopByMatriculeStartingWithOrderByMatriculeDesc(String prefix);
 }

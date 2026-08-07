@@ -45,13 +45,14 @@ public class StatsService {
         long annules = matchs.stream()
                 .filter(m -> m.getStatut() == StatutMatch.ANNULE).count();
 
+        // évite une division par zéro quand un site n'a encore aucun match (site nouvellement créé)
         double tauxOccupation = total > 0 ? (complets * 100.0) / total : 0.0;
 
         long totalMembres = siteId != null
                 ? membreRepository.findBySiteId(siteId).size()
                 : membreRepository.count();
 
-        // Chiffre d'affaires = somme des places payées sur les matchs du périmètre
+        // Chiffre d'affaires = somme des places réellement payées (PAYE) sur le périmètre ; les places INSCRIT/ANNULE ne comptent pas comme revenu
         List<Long> matchIds = matchs.stream().map(Match::getId).collect(Collectors.toList());
         BigDecimal chiffreAffaires = matchIds.isEmpty()
                 ? BigDecimal.ZERO

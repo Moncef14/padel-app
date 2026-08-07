@@ -33,6 +33,7 @@ public class Administrateur {
     @Column(nullable = false)
     private RoleAdmin role;
 
+    // nullable : un ADMIN_GLOBAL agit sur tous les sites, seul un ADMIN_SITE est rattache a un site precis
     @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site;

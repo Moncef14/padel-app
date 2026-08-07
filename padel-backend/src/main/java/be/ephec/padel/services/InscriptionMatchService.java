@@ -71,6 +71,7 @@ public class InscriptionMatchService {
     }
 
     // Inscrire un joueur (match PRIVE uniquement, par l'organisateur)
+    // statut INSCRIT (pas PAYE) : la place est réservée mais pas encore payée par le joueur invité, contrairement à l'organisateur
     @Transactional
     public InscriptionMatch inscrireJoueur(Long matchId, Long membreId, Long organisateurId) {
 
@@ -80,7 +81,7 @@ public class InscriptionMatchService {
         Membre membre = membreRepository.findById(membreId)
                 .orElseThrow(() -> new RuntimeException("Membre non trouvé : " + membreId));
 
-        // Vérifier que c'est un match PRIVE
+        // les matchs PUBLIC/DEVENU_PUBLIC s'inscrivent en libre-service via inscrireEtPayer, pas par invitation de l'organisateur
         if (match.getType() != TypeMatch.PRIVE)
             throw new RuntimeException("Impossible : seul l'organisateur peut inscrire des joueurs sur un match privé");
 
@@ -88,12 +89,12 @@ public class InscriptionMatchService {
         if (!match.getOrganisateur().getId().equals(organisateurId))
             throw new RuntimeException("Impossible : seul l'organisateur peut inscrire des joueurs");
 
-        // Vérifier que le match n'est pas complet (max 4 PAYE)
+        // un terrain accueille 4 joueurs max ; seules les places PAYE comptent (les INSCRIT non payées ne bloquent pas une place ferme)
         int nbPayes = inscriptionMatchRepository.countByMatchIdAndStatutPaiement(matchId, StatutPaiement.PAYE);
         if (nbPayes >= 4)
             throw new RuntimeException("Impossible : le match est complet");
 
-        // Vérifier que le joueur n'est pas déjà inscrit ou annulé sur ce match
+        // empêche une double inscription active ; un joueur qui a quitté (ANNULE) ne peut se réinscrire via cette voie (contrainte d'unicité match+membre)
         boolean dejaInscrit = inscriptionMatchRepository
                 .existsByMatchIdAndMembreId(matchId, membreId);
         if (dejaInscrit)
@@ -127,7 +128,7 @@ public class InscriptionMatchService {
         Membre membre = membreRepository.findById(membreId)
                 .orElseThrow(() -> new RuntimeException("Membre non trouvé : " + membreId));
 
-        // Montant = 15€ + soldeDu
+        // Montant = 15€ (part du terrain à 60€/4) + tout solde dû restant, réglé au passage plutôt que de bloquer le paiement
         BigDecimal montant = BigDecimal.valueOf(15).add(membre.getSoldeDu());
         inscription.setStatutPaiement(StatutPaiement.PAYE);
         inscription.setMontantPaye(montant);
@@ -139,7 +140,7 @@ public class InscriptionMatchService {
 
         InscriptionMatch saved = inscriptionMatchRepository.save(inscription);
 
-        // Vérifier si le match est maintenant complet
+        // 4e paiement reçu : le match passe COMPLET (n'accepte plus de nouveaux joueurs, cf. inscrireJoueur/inscrireEtPayer)
         int nbPayesApres = inscriptionMatchRepository
                 .countByMatchIdAndStatutPaiement(inscription.getMatch().getId(), StatutPaiement.PAYE);
         if (nbPayesApres >= 4) {
@@ -161,11 +162,11 @@ public class InscriptionMatchService {
         Membre membre = membreRepository.findById(membreId)
                 .orElseThrow(() -> new RuntimeException("Membre non trouvé : " + membreId));
 
-        // Vérifier que c'est un match PUBLIC ou DEVENU_PUBLIC
+        // un PRIVE reste fermé au public tant qu'il n'a pas basculé DEVENU_PUBLIC (cf. SchedulerService.basculerMatchsPrives)
         if (match.getType() == TypeMatch.PRIVE && match.getStatut() != StatutMatch.DEVENU_PUBLIC)
             throw new RuntimeException("Impossible : ce match n'est pas ouvert au public");
 
-        // Vérifier que le match n'est pas complet (premier payé = premier servi)
+        // pas de réservation de place à l'avance : premier payé = premier servi, sur les 4 places
         int nbPayes = inscriptionMatchRepository
                 .countByMatchIdAndStatutPaiement(matchId, StatutPaiement.PAYE);
         if (nbPayes >= 4)
@@ -192,7 +193,7 @@ public class InscriptionMatchService {
 
         InscriptionMatch saved = inscriptionMatchRepository.save(inscription);
 
-        // Vérifier si le match est maintenant complet
+        // ici aussi le paiement direct peut faire passer le match COMPLET immédiatement
         int nbPayesApres = inscriptionMatchRepository
                 .countByMatchIdAndStatutPaiement(matchId, StatutPaiement.PAYE);
         if (nbPayesApres >= 4) {
@@ -214,7 +215,7 @@ public class InscriptionMatchService {
         if (!inscription.getMembre().getId().equals(membreId))
             throw new RuntimeException("Vous ne pouvez quitter que votre propre inscription");
 
-        // L'organisateur ne peut pas quitter — il doit annuler le match
+        // l'organisateur porte le match (paiement initial, pénalité en cas d'échec) : il ne peut pas s'en désister, seulement l'annuler entièrement
         Match match = inscription.getMatch();
         if (match.getOrganisateur().getId().equals(membreId))
             throw new RuntimeException("L'organisateur ne peut pas quitter le match — utilisez l'annulation");
@@ -223,7 +224,7 @@ public class InscriptionMatchService {
         inscription.setStatutPaiement(StatutPaiement.ANNULE);
         inscriptionMatchRepository.save(inscription);
 
-        // Si le match était COMPLET, il repasse en EN_ATTENTE
+        // un départ (payé ou non) rouvre une place sur un match plein, qu'il soit privé ou devenu public
         if (match.getStatut() == StatutMatch.COMPLET) {
             match.setStatut(StatutMatch.EN_ATTENTE);
             matchRepository.save(match);

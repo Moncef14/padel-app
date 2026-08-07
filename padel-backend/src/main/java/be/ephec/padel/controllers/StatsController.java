@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stats")
+// stats réservées aux administrateurs, jamais aux membres — les deux rôles y accèdent mais avec un périmètre différent (cf. getStats)
 @PreAuthorize("hasAnyRole('ADMIN_GLOBAL', 'ADMIN_SITE')")
 public class StatsController {
 
@@ -34,6 +35,7 @@ public class StatsController {
         return statsService.getStats(siteId);
     }
 
+    // comparaison entre sites : n'a de sens que pour ADMIN_GLOBAL, qui a une vue sur l'ensemble
     @GetMapping("/par-site")
     @PreAuthorize("hasRole('ADMIN_GLOBAL')")
     public List<StatsParSiteResponse> getStatsParSite() {

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+// empeche un membre de s'inscrire deux fois au meme match
 @Table(name = "inscription_matchs", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"match_id", "membre_id"})
 })
@@ -31,10 +32,12 @@ public class InscriptionMatch {
     @JoinColumn(name = "membre_id", nullable = false)
     private Membre membre;
 
+    // INSCRIT tant que le montant n'est pas regularise ; ANNULE distinct de la suppression pour garder l'historique
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutPaiement statutPaiement;
 
+    // permet un paiement partiel (ex: acompte) sans changer le statut tant que le solde n'est pas couvert
     @Column(nullable = false)
     @Builder.Default
     private BigDecimal montantPaye = BigDecimal.ZERO;

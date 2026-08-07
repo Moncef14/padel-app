@@ -18,16 +18,20 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     List<Match> findByOrganisateurId(Long organisateurId);
 
+    // SchedulerService (job de minuit) : matchs prives EN_ATTENTE du lendemain, candidats a la bascule DEVENU_PUBLIC si pas complets
     List<Match> findByTypeAndStatutAndDateHeureBetween(TypeMatch type, StatutMatch statut, LocalDateTime debut, LocalDateTime fin);
 
+    // SchedulerService : matchs deja DEVENU_PUBLIC du lendemain, pour re-verifier si l'organisateur doit encore etre penalise
     List<Match> findByStatutAndDateHeureBetween(StatutMatch statut, LocalDateTime debut, LocalDateTime fin);
 
     boolean existsByTerrainIdAndDateHeureBetween(Long terrainId, LocalDateTime debut, LocalDateTime fin);
 
+    // MatchService.reserver : verifie qu'aucun match actif n'occupe deja le terrain sur le creneau + battement (1h45), en ignorant les matchs ANNULE
     boolean existsByTerrainIdAndDateHeureBetweenAndStatutNot(Long terrainId, LocalDateTime debut, LocalDateTime fin, StatutMatch statut);
 
     List<Match> findByTerrain_SiteId(Long siteId);
 
+    // historique d'un membre : matchs qu'il a organises OU auxquels il est inscrit avec une place non annulee
     @Query("SELECT DISTINCT m FROM Match m " +
            "LEFT JOIN InscriptionMatch i ON i.match = m " +
            "WHERE m.organisateur.id = :membreId " +

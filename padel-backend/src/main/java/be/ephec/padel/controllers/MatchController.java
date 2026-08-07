@@ -42,6 +42,7 @@ public class MatchController {
                 .map(a -> a.getAuthority().replace("ROLE_", ""))
                 .orElse("");
 
+        // un ADMIN_SITE ne supervise que les matchs de son site, pas ceux des autres sites
         if ("ADMIN_SITE".equals(role)) {
             String authHeader = request.getHeader("Authorization");
             String token = authHeader.substring(7);

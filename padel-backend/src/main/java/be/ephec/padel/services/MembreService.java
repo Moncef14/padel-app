@@ -50,6 +50,7 @@ public class MembreService {
     }
 
     public Membre create(Membre membre) {
+        // email = identifiant de connexion, doit rester unique même si la colonne n'a pas de contrainte unique en base
         if (membreRepository.findByEmail(membre.getEmail()).isPresent()) {
             throw new RuntimeException("Un membre avec cet email existe déjà");
         }
@@ -125,6 +126,7 @@ public class MembreService {
         return toResponse(create(toEntity(dto)));
     }
 
+    // matricule = prefixe du type (G/S/L) + compteur séquentiel sur 4 chiffres, propre à chaque type
     public String genererMatricule(TypeMembre type) {
         String prefix = switch (type) {
             case GLOBAL -> "G";
@@ -139,11 +141,13 @@ public class MembreService {
         return String.format("%s%04d", prefix, prochain);
     }
 
+    // inscription self-service (register) : distincte de create(), gère le hash du mot de passe et la règle de rattachement au site
     @Transactional
     public Membre inscrire(RegisterRequest dto) {
         if (membreRepository.findByEmail(dto.getEmail()).isPresent())
             throw new RuntimeException("Un membre avec cet email existe déjà");
 
+        // seul le type SITE impose un site ; GLOBAL et LIBRE restent sans site (cf. Membre.site)
         Site site = null;
         if (dto.getType() == TypeMembre.SITE) {
             if (dto.getSiteId() == null)

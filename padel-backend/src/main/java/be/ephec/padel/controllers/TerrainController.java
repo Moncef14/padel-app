@@ -32,6 +32,7 @@ public class TerrainController {
                 .map(a -> a.getAuthority().replace("ROLE_", ""))
                 .orElse("");
 
+        // un ADMIN_SITE ne gère que les terrains de son site, pas ceux des autres sites
         if ("ADMIN_SITE".equals(role)) {
             String authHeader = request.getHeader("Authorization");
             String token = authHeader.substring(7);

@@ -97,7 +97,7 @@ public class InscriptionMatchController {
 
     @DeleteMapping("/{id}/quitter")
     public ResponseEntity<Void> quitterMatch(@PathVariable Long id, HttpServletRequest request) {
-        // Extraction du membre connecté depuis le token JWT
+        // le membreId n'est pas passé en paramètre : on le déduit du token pour empêcher qu'un membre libère la place d'un autre
         String authHeader = request.getHeader("Authorization");
         String token = authHeader.substring(7);
         String matricule = jwtUtil.extractUsername(token);

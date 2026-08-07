@@ -18,10 +18,13 @@ public interface InscriptionMatchRepository extends JpaRepository<InscriptionMat
 
     List<InscriptionMatch> findByMatchIdAndStatutPaiement(Long matchId, StatutPaiement statutPaiement);
 
+    // SchedulerService (job de minuit) : places encore INSCRIT (non payees) sur les matchs du lendemain, a liberer automatiquement
     List<InscriptionMatch> findByStatutPaiementAndMatch_DateHeureBetween(StatutPaiement statut, LocalDateTime debut, LocalDateTime fin);
 
+    // nombre de places payees sur un match : sert a determiner s'il est COMPLET (4) ou doit basculer en DEVENU_PUBLIC
     int countByMatchIdAndStatutPaiement(Long matchId, StatutPaiement statut);
 
+    // verifie la contrainte d'unicite (match, membre) avant inscription, pour un message d'erreur metier plutot qu'une violation SQL
     boolean existsByMatchIdAndMembreId(Long matchId, Long membreId);
 
     // Chiffre d'affaires : somme des places payées sur un ensemble de matchs

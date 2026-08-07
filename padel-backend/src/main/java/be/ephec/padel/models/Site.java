@@ -26,9 +26,11 @@ public class Site {
     @Column(nullable = false)
     private LocalTime heureFermeture;
 
+    // saison de validite du site (ex: 2026) : permet de clore une saison sans supprimer l'historique
     @Column(nullable = false)
     private Integer annee;
 
+    // desactive un site plutot que le supprimer, pour garder l'integrite des matchs/terrains passes
     @Column(nullable = false)
     private boolean actif;
 }

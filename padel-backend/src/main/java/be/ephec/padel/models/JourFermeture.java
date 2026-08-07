@@ -7,6 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
+// evite de dupliquer une meme fermeture pour un site donne
 @Table(name = "jours_fermeture", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"date", "site_id"})
 })
@@ -23,6 +24,7 @@ public class JourFermeture {
     @Column(nullable = false)
     private LocalDate date;
 
+    // nullable : une fermeture sans site s'applique a tous les sites (ex: jour ferie national)
     @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site;

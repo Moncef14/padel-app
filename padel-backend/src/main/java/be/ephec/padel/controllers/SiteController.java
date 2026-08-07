@@ -34,6 +34,7 @@ public class SiteController {
         return siteService.getActifs();
     }
 
+    // création/modification/suppression de site réservées à ADMIN_GLOBAL : un ADMIN_SITE gère son site mais n'en crée pas de nouveaux
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_GLOBAL')")
     public ResponseEntity<Site> create(@RequestBody Site site) {

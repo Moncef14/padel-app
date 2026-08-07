@@ -32,6 +32,7 @@ public class Membre {
     @Column(nullable = false)
     private String email;
 
+    // nullable : les membres crees via import/migration n'ont pas encore defini de mot de passe
     @Column(nullable = true)
     private String motDePasse;
 
@@ -39,13 +40,16 @@ public class Membre {
     @Column(nullable = false)
     private TypeMembre type;
 
+    // pas de site pour GLOBAL (acces tous sites) ni LIBRE (pas encore affilie) ; obligatoire seulement pour SITE
     @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site;
 
+    // cumul des impayes ; sert de base au calcul de penalite plutot que de bloquer l'inscription immediatement
     @Column(nullable = false)
     @Builder.Default
     private BigDecimal soldeDu = BigDecimal.ZERO;
 
+    // date de fin de suspension suite a un impaye ; null = pas de penalite en cours
     private LocalDate penaliteJusquAu;
 }

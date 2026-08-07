@@ -35,6 +35,7 @@ public class SchedulerService {
         this.membreRepository = membreRepository;
     }
 
+    // tourne chaque nuit à 23h59 sur les matchs du lendemain : dernier moment pour régulariser avant le jour J
     @Scheduled(cron = "0 59 23 * * *")
     @Transactional
     public void basculerMatchsPrives() {
@@ -42,6 +43,7 @@ public class SchedulerService {
         LocalDateTime finDemain = LocalDate.now().plusDays(1).atTime(23, 59, 59);
 
         // ÉTAPE A — LIBÉRER LES PLACES NON PAYÉES
+        // une place INSCRIT jamais payée jusqu'à la veille est considérée abandonnée ; elle ne compte plus dans le nombre de PAYE de l'étape B
         List<InscriptionMatch> inscriptionsInscrit = inscriptionMatchRepository
                 .findByStatutPaiementAndMatch_DateHeureBetween(StatutPaiement.INSCRIT, debutDemain, finDemain);
         for (InscriptionMatch inscription : inscriptionsInscrit) {
@@ -52,6 +54,7 @@ public class SchedulerService {
         }
 
         // ÉTAPE B — BASCULER LES MATCHS PRIVÉS EN_ATTENTE
+        // un match PRIVE qui n'a pas trouvé ses 4 joueurs payants la veille devient public : les places vides sont ouvertes à tous
         List<Match> matchsPrive = matchRepository
                 .findByTypeAndStatutAndDateHeureBetween(TypeMatch.PRIVE, StatutMatch.EN_ATTENTE, debutDemain, finDemain);
         for (Match match : matchsPrive) {
@@ -61,7 +64,9 @@ public class SchedulerService {
                 match.setDevenuPublicLe(LocalDate.now().atStartOfDay());
                 Membre organisateur = membreRepository.findById(match.getOrganisateur().getId())
                         .orElseThrow(() -> new RuntimeException("Organisateur non trouvé : " + match.getOrganisateur().getId()));
+                // pénalité de 7 jours : sanctionne l'organisateur pour ne pas avoir complété son match, bloque toute nouvelle réservation (cf. MatchService.create)
                 organisateur.setPenaliteJusquAu(LocalDate.now().plusDays(7));
+                // l'organisateur assume le coût des places vides (15€/place) qu'il n'a pas su remplir, à régler avant sa prochaine réservation
                 int placesVides = 4 - nbPayes;
                 organisateur.setSoldeDu(organisateur.getSoldeDu()
                         .add(BigDecimal.valueOf(placesVides).multiply(new BigDecimal("15"))));
@@ -73,12 +78,14 @@ public class SchedulerService {
         }
 
         // ÉTAPE C — VÉRIFIER LES MATCHS DÉJÀ DEVENU_PUBLIC
+        // un match déjà public la veille (converti un jour antérieur) peut encore se remplir via inscrireEtPayer ; on ne repénalise que si toujours incomplet
         List<Match> matchsDevenuPublic = matchRepository
                 .findByStatutAndDateHeureBetween(StatutMatch.DEVENU_PUBLIC, debutDemain, finDemain);
         for (Match match : matchsDevenuPublic) {
             int nbPayes = inscriptionMatchRepository.countByMatchIdAndStatutPaiement(match.getId(), StatutPaiement.PAYE);
             Membre organisateur = membreRepository.findById(match.getOrganisateur().getId())
                     .orElseThrow(() -> new RuntimeException("Organisateur non trouvé : " + match.getOrganisateur().getId()));
+            // évite de réappliquer/prolonger une pénalité déjà active pour ce même match (l'étape B l'a déjà posée le jour de la bascule)
             if (nbPayes < 4
                     && (organisateur.getPenaliteJusquAu() == null
                         || organisateur.getPenaliteJusquAu().isBefore(LocalDate.now()))) {

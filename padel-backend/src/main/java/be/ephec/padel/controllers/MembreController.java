@@ -35,6 +35,7 @@ public class MembreController {
                 .map(a -> a.getAuthority().replace("ROLE_", ""))
                 .orElse("");
 
+        // un ADMIN_SITE ne doit voir que les membres de son propre site, jamais la liste complète (contrairement à ADMIN_GLOBAL)
         if ("ADMIN_SITE".equals(role)) {
             String authHeader = request.getHeader("Authorization");
             String token = authHeader.substring(7);

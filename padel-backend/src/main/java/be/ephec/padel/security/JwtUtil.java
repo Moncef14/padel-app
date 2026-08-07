@@ -12,11 +12,14 @@ import java.util.Date;
 public class
 JwtUtil {
 
+    // clé symétrique HMAC : même secret pour signer et vérifier (côté serveur uniquement, jamais envoyé au frontend)
     private static final String SECRET = "padel-ephec-super-secret-key-256bits-minimum-32chars!!";
+    // validité 24h : le token expire seul, pas besoin de mécanisme de révocation côté serveur (stateless)
     private static final long EXPIRATION_MS = 24L * 60 * 60 * 1000;
 
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
+    // token "membre" : pas de rôle ni de site dans les claims — un membre n'a pas de droits d'administration à porter dans le token
     public String generateToken(String subject) {
         return Jwts.builder()
                 .subject(subject)
@@ -26,6 +29,8 @@ JwtUtil {
                 .compact();
     }
 
+    // token "administrateur" : le rôle (ADMIN_GLOBAL/ADMIN_SITE) et le siteId sont embarqués dans le token
+    // pour que chaque requête suivante sache qui appelle sans re-consulter la base (cf. JwtFilter, filtrage par site dans les controllers)
     public String generateToken(String subject, String role, Long siteId) {
         return Jwts.builder()
                 .subject(subject)
@@ -51,6 +56,7 @@ JwtUtil {
         return ((Number) siteId).longValue();
     }
 
+    // valide = signature correcte (via parseClaims, qui lève si altéré) ET non expiré ; toute exception (token malformé, signature invalide) = invalide
     public boolean isTokenValid(String token) {
         try {
             return !parseClaims(token).getExpiration().before(new Date());
@@ -59,6 +65,7 @@ JwtUtil {
         }
     }
 
+    // parseSignedClaims revérifie la signature avec la clé locale : un token modifié ou signé avec une autre clé est rejeté ici
     private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)

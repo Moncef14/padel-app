@@ -33,6 +33,8 @@ import { Site } from '../../../models/site.model';
 })
 export class Register {
 
+  // pas de champ matricule : il est généré côté backend (MembreService.genererMatricule, prefixe G/S/L + compteur)
+  // pour garantir son unicité et son format, un utilisateur ne doit ni ne peut le choisir lui-même
   formulaire: RegisterRequest = {
     nom: '',
     prenom: '',

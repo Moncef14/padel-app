@@ -28,12 +28,14 @@ export class InscriptionService {
     );
   }
 
+  // régularise une place déjà réservée (statut INSCRIT → PAYE) sur un match PRIVE — distinct de inscrireEtPayer qui fait les deux d'un coup
   payerPlace(inscriptionId: number, membreId: number): Observable<InscriptionMatchResponse> {
     return this.http.post<InscriptionMatchResponse>(
       `${API_URL}/payer/${inscriptionId}?membreId=${membreId}`, {}
     );
   }
 
+  // pas de membreId dans l'URL/body : le backend le déduit du token JWT pour empêcher qu'on libère la place d'un autre membre
   quitterMatch(inscriptionId: number): Observable<void> {
     return this.http.delete<void>(`${API_URL}/${inscriptionId}/quitter`);
   }

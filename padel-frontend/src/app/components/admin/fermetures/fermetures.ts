@@ -59,6 +59,7 @@ export class Fermetures implements OnInit {
     });
   }
 
+  // site absent = fermeture globale (jour férié), reflète la colonne site_id nullable côté backend
   nomSite(fermeture: JourFermeture): string {
     const site = (fermeture as any).site;
     if (!site) return 'Fermeture globale';
@@ -83,6 +84,8 @@ export class Fermetures implements OnInit {
 @Component({
   selector: 'app-fermeture-form-dialog',
   standalone: true,
+  // provider nécessaire ici : ce composant standalone n'hérite pas du DateAdapter global de l'app,
+  // sans lui mat-datepicker n'a pas de format de date à utiliser et lève une erreur au chargement
   providers: [provideNativeDateAdapter()],
   imports: [
     CommonModule, FormsModule, MatDialogModule, MatFormFieldModule,

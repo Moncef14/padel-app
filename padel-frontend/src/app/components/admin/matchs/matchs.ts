@@ -21,6 +21,8 @@ export class Matchs implements OnInit {
   errorMessage = signal<string | null>(null);
   displayedColumns = ['dateHeure', 'site', 'organisateur', 'type', 'statut', 'montant', 'actions'];
 
+  // même logique que côté membre (MesMatchs) : la date passée fait basculer un match en historique
+  // même s'il n'a jamais été annulé — le statut seul ne suffit pas à distinguer actif/passé
   readonly matchsActifs = computed(() =>
     this.matchs().filter(m =>
       m.statut !== StatutMatch.ANNULE && new Date(m.dateHeure) >= new Date()

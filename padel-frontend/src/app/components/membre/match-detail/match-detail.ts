@@ -73,11 +73,15 @@ export class MatchDetail implements OnInit {
     return this.match()?.organisateurId === this.auth.getMembreId();
   }
 
+  // l'organisateur est toujours PAYE dès la création du match (cf. MatchService.create côté backend) : il n'a donc jamais
+  // le statut INSCRIT et ce bouton ne peut logiquement lui être proposé, pas besoin de l'exclure explicitement ici
   peutPayer(): boolean {
     const inscription = this.monInscription();
     return inscription !== undefined && inscription.statutPaiement === StatutPaiement.INSCRIT;
   }
 
+  // exclusion explicite de l'organisateur : lui seul peut annuler le match entier (cf. annuler()), il ne peut pas
+  // se désister individuellement comme un joueur invité (règle backend, InscriptionMatchService.quitterMatch)
   peutQuitter(): boolean {
     const inscription = this.monInscription();
     return inscription !== undefined

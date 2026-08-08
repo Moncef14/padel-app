@@ -16,6 +16,7 @@ export class JourFermetureService {
     return this.http.get<JourFermeture[]>(API_URL);
   }
 
+  // fermetures sans site (site null côté backend) = jours fériés applicables à tous les sites, distinctes des fermetures propres à un site
   getGlobaux(): Observable<JourFermeture[]> {
     return this.http.get<JourFermeture[]>(`${API_URL}/globaux`);
   }

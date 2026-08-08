@@ -17,6 +17,9 @@ import { MembreResponse } from '../../../models/membre.model';
 })
 export class Profil implements OnInit {
 
+  // pas de bouton "payer le solde" ici : soldeDu n'est réglable qu'au prochain paiement de place
+  // (payerPlace/inscrireEtPayer y ajoutent automatiquement soldeDu, cf. InscriptionMatchService côté backend) —
+  // le profil ne fait qu'afficher ce solde en lecture seule, jamais de paiement isolé
   membre = signal<MembreResponse | null>(null);
   nombreMatchs = signal<number>(0);
   loading = signal(true);

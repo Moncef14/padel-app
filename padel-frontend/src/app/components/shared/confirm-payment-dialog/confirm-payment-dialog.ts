@@ -14,6 +14,8 @@ export interface ConfirmPaymentData {
   templateUrl: './confirm-payment-dialog.html',
   styleUrl: './confirm-payment-dialog.scss'
 })
+// étape de confirmation avant payerPlace/inscrireEtPayer : le paiement débite réellement soldeDu et n'a pas de "undo" côté backend,
+// donc un clic accidentel sur le bouton payer ne doit pas déclencher l'appel API directement
 export class ConfirmPaymentDialog {
 
   constructor(
@@ -21,6 +23,7 @@ export class ConfirmPaymentDialog {
     @Inject(MAT_DIALOG_DATA) public data: ConfirmPaymentData
   ) {}
 
+  // le composant appelant attend ce booléen (via afterClosed()) pour décider s'il lance réellement l'appel au service de paiement
   confirmer(): void {
     this.dialogRef.close(true);
   }

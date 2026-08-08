@@ -36,6 +36,8 @@ export class Terrains implements OnInit {
   readonly groupesParSite = computed<GroupeSite[]>(() => {
     const groupes = new Map<string, Terrain[]>();
     for (const t of this.terrains()) {
+      // double fallback : getAll() renvoie l'entité JPA brute (site.nom imbriqué) alors que d'autres endpoints
+      // renvoient un TerrainResponse à plat (nomSite) — les deux formes doivent être supportées ici
       const nomSite = (t as any).site?.nom ?? t.nomSite ?? 'Site inconnu';
       if (!groupes.has(nomSite)) groupes.set(nomSite, []);
       groupes.get(nomSite)!.push(t);

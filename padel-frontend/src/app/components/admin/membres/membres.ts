@@ -157,6 +157,8 @@ export class MembreFormDialog {
   enregistrer(): void {
     this.erreurLocale.set(null);
 
+    // évite d'envoyer un siteId résiduel si l'admin a sélectionné un site puis changé le type vers GLOBAL/LIBRE
+    // (le champ site disparaît du formulaire mais sa valeur reste en mémoire tant qu'on ne la réinitialise pas)
     if (this.formulaire.type !== TypeMembre.SITE) {
       this.formulaire.siteId = null;
     }

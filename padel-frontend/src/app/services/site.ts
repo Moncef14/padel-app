@@ -16,6 +16,7 @@ export class SiteService {
     return this.http.get<Site[]>(API_URL);
   }
 
+  // route publique côté backend (permitAll) : utilisée sur les écrans login/inscription, avant qu'un token existe
   getActifs(): Observable<Site[]> {
     return this.http.get<Site[]>(`${API_URL}/actifs`);
   }

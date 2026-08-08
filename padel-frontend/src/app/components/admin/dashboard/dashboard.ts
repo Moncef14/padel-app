@@ -29,6 +29,8 @@ export class Dashboard implements OnInit {
       error: () => this.loading.set(false)
     });
 
+    // évite un appel voué à échouer : /api/stats/par-site est réservé ADMIN_GLOBAL côté backend (@PreAuthorize),
+    // un ADMIN_SITE recevrait un 403 — la comparaison entre sites n'a de toute façon pas de sens pour lui
     if (this.auth.isAdminGlobal()) {
       this.statsService.getStatsParSite().subscribe({
         next: (statsSites) => this.statsParSite.set(statsSites)

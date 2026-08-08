@@ -22,12 +22,14 @@ export class MesMatchs implements OnInit {
   matchs = signal<MatchResponse[]>([]);
   loading = signal(true);
 
+  // "actif" = pas encore joué et pas annulé ; un match COMPLET ou DEVENU_PUBLIC reste actif tant que sa date n'est pas passée
   readonly matchsActifs = computed(() =>
     this.matchs().filter(m =>
       m.statut !== StatutMatch.ANNULE && new Date(m.dateHeure) >= new Date()
     )
   );
 
+  // basé sur le statut ET la date (pas uniquement le statut) : un match passé mais jamais annulé doit quand même sortir de la liste active
   readonly matchsHistorique = computed(() =>
     this.matchs().filter(m =>
       m.statut === StatutMatch.ANNULE || new Date(m.dateHeure) < new Date()

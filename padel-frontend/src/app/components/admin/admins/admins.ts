@@ -100,6 +100,7 @@ export class Admins implements OnInit {
           <mat-error>Email invalide</mat-error>
         }
       </mat-form-field>
+      <!-- champ masqué en édition : laisser vide ne doit pas écraser le hash existant (cf. AdministrateurService.update côté backend) -->
       @if (!data) {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Mot de passe</mat-label>
@@ -163,6 +164,7 @@ export class AdminFormDialog {
   enregistrer(): void {
     this.erreurLocale.set(null);
 
+    // seul ADMIN_SITE a besoin d'un site : un ADMIN_GLOBAL agit sur tous les sites (cf. Administrateur.site nullable)
     if (this.formulaire.role !== RoleAdmin.ADMIN_SITE) {
       this.formulaire.siteId = null;
     }

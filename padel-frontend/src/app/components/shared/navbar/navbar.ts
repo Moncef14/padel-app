@@ -14,6 +14,9 @@ import { Auth } from '../../../services/auth';
 })
 export class Navbar {
 
+  // auth public (pas privé) : le template lit directement isMembre()/isAdmin()/isAdminGlobal()
+  // pour choisir quels liens afficher — cf. navbar.html, la hiérarchie de menus suit celle des guards
+  // (isAdminGlobal implique isAdmin, donc ses liens s'ajoutent à ceux d'un admin plutôt que de les remplacer)
   constructor(public auth: Auth, private router: Router) {}
 
   logout(): void {

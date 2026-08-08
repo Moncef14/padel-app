@@ -24,6 +24,8 @@ export class Auth {
   // Signaux dérivés pratiques à consommer dans les guards/components
   readonly currentUser = computed(() => this.authState());
   readonly isLoggedIn = computed(() => this.authState() !== null);
+  // pas de champ "isAdmin" côté backend : on déduit le type de compte selon le champ présent dans l'état stocké
+  // (role rempli = admin, matricule rempli = membre — les deux flux de login remplissent des champs différents, cf. loginAdmin/loginMembre)
   readonly isAdmin = computed(() => this.authState()?.role !== null && this.authState()?.role !== undefined);
   readonly isMembre = computed(() => this.authState()?.matricule !== null && this.authState()?.matricule !== undefined);
   readonly isAdminGlobal = computed(() => this.authState()?.role === 'ADMIN_GLOBAL');

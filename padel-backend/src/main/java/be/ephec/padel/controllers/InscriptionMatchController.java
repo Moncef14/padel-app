@@ -95,6 +95,21 @@ public class InscriptionMatchController {
                         inscriptionMatchService.inscrireEtPayer(matchId, membreId)));
     }
 
+    @PostMapping("/inviter/{matchId}")
+    public ResponseEntity<InscriptionMatchResponse> inviter(
+            @PathVariable Long matchId, @RequestParam String matricule, HttpServletRequest request) {
+        // l'organisateurId n'est pas passé en paramètre : on le déduit du token pour empêcher qu'un membre invite au nom d'un autre
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        String matriculeOrganisateur = jwtUtil.extractUsername(token);
+
+        Long organisateurId = membreService.getByMatricule(matriculeOrganisateur).getId();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                inscriptionMatchService.toResponse(
+                        inscriptionMatchService.inviter(matchId, matricule, organisateurId)));
+    }
+
     @DeleteMapping("/{id}/quitter")
     public ResponseEntity<Void> quitterMatch(@PathVariable Long id, HttpServletRequest request) {
         // le membreId n'est pas passé en paramètre : on le déduit du token pour empêcher qu'un membre libère la place d'un autre

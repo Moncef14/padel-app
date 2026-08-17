@@ -30,6 +30,27 @@
         }
       </div>
 
+      @if (peutInviter()) {
+        <div class="invitation-section">
+          <p class="section-title">Inviter un joueur</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sélectionner un membre</mat-label>
+            <mat-select [(ngModel)]="matriculeSelectionne">
+              @for (membre of membresDisponibles(); track membre.matricule) {
+                <mat-option [value]="membre.matricule">
+                  {{ membre.matricule }} — {{ membre.prenom }} {{ membre.nom }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <button mat-flat-button color="primary"
+                  [disabled]="!matriculeSelectionne || actionEnCours()"
+                  (click)="inviter()">
+            Inviter ce joueur
+          </button>
+        </div>
+      }
+
       @if (errorMessage()) {
         <p class="error-message">{{ errorMessage() }}</p>
       }

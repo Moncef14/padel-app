@@ -110,6 +110,41 @@ public class InscriptionMatchService {
         return inscriptionMatchRepository.save(inscription);
     }
 
+    // Inviter un membre par son matricule (match PRIVE, par l'organisateur) pour compléter les 4 places
+    // statut INSCRIT : le joueur invité devra payer sa place lui-même via payerPlace
+    @Transactional
+    public InscriptionMatch inviter(Long matchId, String matriculeMembre, Long organisateurId) {
+
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match non trouvé : " + matchId));
+
+        if (match.getType() != TypeMatch.PRIVE)
+            throw new RuntimeException("Seul un match privé peut recevoir des invitations");
+
+        if (!match.getOrganisateur().getId().equals(organisateurId))
+            throw new RuntimeException("Seul l'organisateur peut inviter des joueurs");
+
+        if (match.getStatut() == StatutMatch.COMPLET)
+            throw new RuntimeException("Ce match est déjà complet");
+
+        Membre membre = membreRepository.findByMatricule(matriculeMembre)
+                .orElseThrow(() -> new RuntimeException("Membre introuvable"));
+
+        boolean dejaInscrit = inscriptionMatchRepository
+                .existsByMatchIdAndMembreId(matchId, membre.getId());
+        if (dejaInscrit)
+            throw new RuntimeException("Ce membre est déjà inscrit à ce match");
+
+        InscriptionMatch inscription = InscriptionMatch.builder()
+                .match(match)
+                .membre(membre)
+                .statutPaiement(StatutPaiement.INSCRIT)
+                .montantPaye(BigDecimal.ZERO)
+                .build();
+
+        return inscriptionMatchRepository.save(inscription);
+    }
+
     // Payer sa place (match PRIVE)
     @Transactional
     public InscriptionMatch payerPlace(Long inscriptionId, Long membreId) {

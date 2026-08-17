@@ -119,3 +119,25 @@
   padding-top: 16px;
   border-top: 1px solid #F0F0F0;
 }
+
+.invitation-section {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  background-color: #FAFAFA;
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+}

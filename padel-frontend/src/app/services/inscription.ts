@@ -39,4 +39,11 @@ export class InscriptionService {
   quitterMatch(inscriptionId: number): Observable<void> {
     return this.http.delete<void>(`${API_URL}/${inscriptionId}/quitter`);
   }
+
+  // invitation par l'organisateur d'un match PRIVE — l'organisateurId est déduit du token JWT côté backend
+  inviter(matchId: number, matricule: string): Observable<InscriptionMatchResponse> {
+    return this.http.post<InscriptionMatchResponse>(
+      `${API_URL}/inviter/${matchId}?matricule=${matricule}`, {}
+    );
+  }
 }

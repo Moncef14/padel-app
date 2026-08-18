@@ -78,14 +78,16 @@ class MatchServiceTest {
 
     @Test
     void create_shouldSaveAndReturnMatch() {
-        Site site = Site.builder().id(1L).nom("Padel Ixelles").build();
+        Site site = Site.builder().id(1L).nom("Padel Ixelles")
+                .heureOuverture(java.time.LocalTime.of(8, 0))
+                .heureFermeture(java.time.LocalTime.of(22, 0)).build();
         Terrain terrain = Terrain.builder().id(1L).site(site).build();
         Membre organisateur = Membre.builder()
                 .id(1L).matricule("G0001").nom("Dubois").prenom("Marie")
                 .type(TypeMembre.GLOBAL).soldeDu(BigDecimal.ZERO).build();
 
         Match match = Match.builder()
-                .dateHeure(LocalDateTime.now().plusDays(30))
+                .dateHeure(LocalDateTime.now().plusDays(30).withHour(10).withMinute(0).withSecond(0).withNano(0))
                 .type(TypeMatch.PRIVE).statut(StatutMatch.EN_ATTENTE)
                 .montantTotal(new BigDecimal("60"))
                 .organisateur(organisateur).terrain(terrain).build();

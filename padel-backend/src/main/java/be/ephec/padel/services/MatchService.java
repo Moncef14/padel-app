@@ -20,6 +20,8 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 
+import java.time.LocalTime;
+
 import be.ephec.padel.models.InscriptionMatch;
 import be.ephec.padel.models.enums.StatutPaiement;
 import be.ephec.padel.repositories.InscriptionMatchRepository;
@@ -134,6 +136,14 @@ public class MatchService {
             jourFermetureRepository.existsBySiteIdAndDate(terrain.getSite().getId(), dateMatch);
         if (jourFerme) {
             throw new RuntimeException("Réservation impossible : le site est fermé le " + dateMatch);
+        }
+
+        // Vérification horaires d'ouverture/fermeture du site
+        LocalTime heureMatch = dateHeure.toLocalTime();
+        if (heureMatch.isBefore(terrain.getSite().getHeureOuverture()) ||
+                !heureMatch.isBefore(terrain.getSite().getHeureFermeture())) {
+            throw new RuntimeException("Réservation impossible : en dehors des horaires d'ouverture du site ("
+                    + terrain.getSite().getHeureOuverture() + " - " + terrain.getSite().getHeureFermeture() + ")");
         }
 
         // VÉRIFICATION CRÉNEAU DISPONIBLE

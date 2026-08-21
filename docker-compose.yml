@@ -28,16 +28,29 @@ services:
       /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P 'PadelAdmin2026!' -C -Q \"IF DB_ID('padeldb') IS NULL CREATE DATABASE padeldb\"
       "
 
+  create-app-user:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: padel-create-app-user
+    depends_on:
+      create-db:
+        condition: service_completed_successfully
+    volumes:
+      - ./create-app-user.sql:/create-app-user.sql
+    entrypoint: >
+      bash -c "
+      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P 'PadelAdmin2026!' -C -i /create-app-user.sql
+      "
+
   backend:
     build: ./padel-backend
     container_name: padel-backend
     depends_on:
-      create-db:
+      create-app-user:
         condition: service_completed_successfully
     environment:
       SPRING_DATASOURCE_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=padeldb;encrypt=true;trustServerCertificate=true"
-      SPRING_DATASOURCE_USERNAME: "sa"
-      SPRING_DATASOURCE_PASSWORD: "PadelAdmin2026!"
+      SPRING_DATASOURCE_USERNAME: "padel_app"
+      SPRING_DATASOURCE_PASSWORD: "PadelApp2026!"
     ports:
       - "8080:8080"
     healthcheck:

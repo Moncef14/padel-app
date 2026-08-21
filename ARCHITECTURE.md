@@ -6,10 +6,14 @@ Application de gestion de réservations de terrains de padel, multi-sites,
 avec deux interfaces : membre (réservation, paiement) et administrateur
 (gestion des sites, terrains, membres, statistiques).
 
-Le projet est composé de 3 services conteneurisés via Docker :
-- **Backend** : API REST Spring Boot
-- **Frontend** : Application Angular servie par Nginx
-- **Base de données** : SQL Server
+Le projet est composé de 6 services conteneurisés via Docker :
+- **sqlserver** : base SQL Server 2022
+- **create-db** : création de la base `padeldb`
+- **create-app-user** : création du login/user applicatif `padel_app`
+  (moindre privilège)
+- **backend** : API REST Spring Boot, se connecte avec le compte `padel_app`
+- **sqlserver-init** : seeding automatique via `init.sql`
+- **frontend** : Application Angular servie par Nginx
 
 ---
 
@@ -134,10 +138,14 @@ src/app/
 
 ## Infrastructure — Docker
 
-4 services orchestrés via `docker-compose.yml` :
+6 services orchestrés via `docker-compose.yml` :
 1. **sqlserver** — base SQL Server 2022
 2. **create-db** — création de la base `padeldb`
-3. **backend** — API Spring Boot (healthcheck via Actuator)
-4. **sqlserver-init** — seeding automatique via `init.sql`, exécuté
+3. **create-app-user** — création du login/user applicatif `padel_app`
+   (moindre privilège : `db_datareader`, `db_datawriter`, `db_ddladmin`),
+   exécuté avant le démarrage du backend
+4. **backend** — API Spring Boot (healthcheck via Actuator), se connecte
+   avec le compte `padel_app`
+5. **sqlserver-init** — seeding automatique via `init.sql`, exécuté
    après création des tables par Hibernate
-5. **frontend** — Angular servi par Nginx
+6. **frontend** — Angular servi par Nginx

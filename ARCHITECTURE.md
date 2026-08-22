@@ -88,7 +88,7 @@ be.ephec.padel/
 Swagger UI : http://localhost:8080/swagger-ui.html
 
 ### Tests
-32 tests unitaires (services, controllers `@WebMvcTest`, repositories
+41 tests unitaires (services, controllers `@WebMvcTest`, repositories
 `@DataJpaTest` + H2). Lancement : `./mvnw test`
 
 ---
